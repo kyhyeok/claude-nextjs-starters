@@ -1,6 +1,6 @@
 # React Hook Form + Zod + Server Actions 완전 가이드
 
-이 문서는 Next.js 15.5.3에서 React Hook Form + Zod + Server Actions를 활용한 최적의 폼 처리 패턴을 제공합니다.
+이 문서는 Next.js 16.2.4에서 React Hook Form + Zod + Server Actions를 활용한 최적의 폼 처리 패턴을 제공합니다.
 
 ## 🚀 기본 설정 및 셋업
 
