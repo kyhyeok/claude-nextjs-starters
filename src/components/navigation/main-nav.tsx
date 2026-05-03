@@ -9,9 +9,7 @@ interface NavItem {
   href: string
 }
 
-const navItems: NavItem[] = [
-  { title: '홈', href: '/' },
-]
+const navItems: NavItem[] = [{ title: '홈', href: '/' }]
 
 export function MainNav() {
   const pathname = usePathname()
