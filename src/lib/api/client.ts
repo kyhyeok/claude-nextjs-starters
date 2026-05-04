@@ -1,5 +1,6 @@
 import ky, { type KyInstance, type Options } from 'ky'
 import { ApiError } from './errors'
+import { generateRequestId, REQUEST_ID_HEADER } from './request-id'
 
 /**
  * 외부 백엔드(Java/Kotlin/Nest)와 통신하는 단일 HTTP 클라이언트.
@@ -61,6 +62,10 @@ function createApiClient(params: CreateApiClientParams): KyInstance {
           const token = await tokenProvider()
           if (token) {
             request.headers.set('Authorization', `Bearer ${token}`)
+          }
+          // 사고 진단을 위한 X-Request-ID 자동 부착 (이미 있으면 보존)
+          if (!request.headers.has(REQUEST_ID_HEADER)) {
+            request.headers.set(REQUEST_ID_HEADER, generateRequestId())
           }
         },
       ],

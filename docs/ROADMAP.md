@@ -4,7 +4,7 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **📅 최종 업데이트**: 2026-05-04
-**📊 진행 상황**: Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G 완료 ✅ / Phase 5-D/F 옵션
+**📊 진행 상황**: Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H 완료 ✅ / Phase 5-D/F 옵션
 
 ---
 
@@ -103,6 +103,22 @@
 - ✅ `docs/guides/testing.md` 신규 작성 (3계층 전략 + 작성 패턴 + 함정 6종)
 - ✅ `.gitignore`에 test-results/, playwright-report/ 등 추가
 - ✅ 검증: `npm run test` (8/8) + `npm run test:e2e` (4/4) 통과
+
+### Phase 5-H: 운영 준비 보강 (헬스체크 + Request ID + CSP) ✅
+
+baseline의 *운영 단계 빈틈*을 코드 + 가이드로 보강.
+
+- ✅ `app/api/health/route.ts` — 무인증 헬스체크 (Vercel/uptime 모니터링용)
+- ✅ `lib/api/request-id.ts` — `X-Request-ID` 자동 생성/전파 헬퍼
+- ✅ `lib/api/client.ts`의 ky beforeRequest에 X-Request-ID 자동 부착
+- ✅ `app/api/proxy/[...path]/route.ts`에 X-Request-ID 보존/echo
+- ✅ `next.config.ts` 보안 헤더 보강:
+  - HSTS (`max-age=63072000; includeSubDomains; preload`)
+  - Permissions-Policy (camera/microphone/geolocation/interest-cohort 차단)
+  - X-DNS-Prefetch-Control
+  - Content-Security-Policy (환경별 동적 — dev/prod 분기)
+- ✅ `docs/guides/security-headers.md` 신규 (헤더 8종 + CSP 정책 + 외부 도메인 추가 절차 + nonce 마이그레이션 + Report-Only + X-Request-ID 흐름 + 헬스체크 + 함정 6종)
+- ✅ CLAUDE.md / PRD.md에 가이드 링크 추가
 
 ### Phase 5-G: Mobile-First 보강 ✅
 

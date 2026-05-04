@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { serverEnv } from '@/lib/env/server'
 import { readAccessToken } from '@/lib/auth/cookies'
+import { getOrCreateRequestId, REQUEST_ID_HEADER } from '@/lib/api/request-id'
 
 /**
  * /api/proxy/* — 외부 백엔드(BACKEND_API_BASE_URL)로 모든 메서드를 포워딩하는 catch-all.
@@ -52,6 +53,10 @@ async function handle(
     headers.delete('Authorization')
   }
 
+  // 사고 진단을 위한 X-Request-ID 보존/생성 (백엔드와 추적 연결)
+  const requestId = getOrCreateRequestId(request.headers)
+  headers.set(REQUEST_ID_HEADER, requestId)
+
   // GET/HEAD는 body 없음
   const hasBody = !['GET', 'HEAD'].includes(request.method)
 
@@ -72,7 +77,10 @@ async function handle(
         message: 'Upstream request failed',
         cause: error instanceof Error ? error.message : 'unknown',
       },
-      { status: 502 }
+      {
+        status: 502,
+        headers: { [REQUEST_ID_HEADER]: requestId },
+      }
     )
   }
 
@@ -84,6 +92,11 @@ async function handle(
     if (lower === 'content-encoding' || lower === 'content-length') return
     responseHeaders.set(key, value)
   })
+
+  // X-Request-ID echo (백엔드가 echo하지 않더라도 프론트로 전파)
+  if (!responseHeaders.has(REQUEST_ID_HEADER)) {
+    responseHeaders.set(REQUEST_ID_HEADER, requestId)
+  }
 
   return new Response(upstream.body, {
     status: upstream.status,
