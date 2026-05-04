@@ -2,7 +2,11 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { EyeIcon, EyeOffIcon } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { EyeIcon, EyeOffIcon, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -13,54 +17,57 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useLogin } from '@/lib/auth/use-auth'
+import { loginFormSchema, type LoginFormValues } from '@/lib/auth/form-schemas'
+import { applyApiErrorToForm } from '@/lib/forms/api-error-to-form'
 
+/**
+ * 로그인 폼 — 새 baseline 표준 패턴 예시.
+ *
+ * - RHF + Zod로 클라이언트 검증
+ * - useLogin 훅이 /api/auth/login을 호출하고 ApiError로 throw
+ * - applyApiErrorToForm 헬퍼가 백엔드 검증 실패를 폼 필드 에러로 매핑
+ * - 매핑할 fieldErrors가 없는 경우(예: 401 잘못된 자격증명)는 toast로 폴백
+ */
 export function LoginForm() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const returnTo = searchParams.get('returnTo') ?? '/'
+
   const [showPassword, setShowPassword] = useState(false)
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false,
-  })
-  const [errors, setErrors] = useState({
-    email: '',
-    password: '',
+
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: { email: '', password: '', rememberMe: false },
+    mode: 'onBlur',
   })
 
-  const validateForm = () => {
-    const newErrors = { email: '', password: '' }
+  const { mutate: login, isPending } = useLogin()
 
-    if (!formData.email) {
-      newErrors.email = '이메일을 입력해 주세요.'
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = '올바른 이메일 주소를 입력해 주세요.'
-    }
-
-    if (!formData.password) {
-      newErrors.password = '비밀번호를 입력해 주세요.'
-    } else if (formData.password.length < 8) {
-      newErrors.password = '비밀번호는 최소 8자 이상이어야 합니다.'
-    }
-
-    setErrors(newErrors)
-    return !newErrors.email && !newErrors.password
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (validateForm()) {
-      console.log('로그인 데이터:', formData)
-      // 여기에 로그인 로직을 추가하세요
-    }
-  }
-
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-    // 입력 시 에러 초기화
-    if (field === 'email' || field === 'password') {
-      setErrors(prev => ({ ...prev, [field]: '' }))
-    }
+  const onSubmit = (values: LoginFormValues) => {
+    login(
+      { email: values.email, password: values.password },
+      {
+        onSuccess: () => {
+          toast.success('로그인되었습니다')
+          router.replace(returnTo)
+          router.refresh()
+        },
+        onError: error => {
+          const mapped = applyApiErrorToForm(error, form.setError)
+          if (!mapped) toast.error(error.message)
+        },
+      }
+    )
   }
 
   return (
@@ -72,72 +79,99 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">이메일</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="your@email.com"
-              value={formData.email}
-              onChange={e => handleInputChange('email', e.target.value)}
-              className={errors.email ? 'border-red-500' : ''}
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4"
+            noValidate
+          >
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>이메일</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      autoComplete="email"
+                      placeholder="your@email.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {errors.email && (
-              <p className="text-sm text-red-500">{errors.email}</p>
-            )}
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">비밀번호</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="비밀번호를 입력하세요"
-                value={formData.password}
-                onChange={e => handleInputChange('password', e.target.value)}
-                className={errors.password ? 'border-red-500 pr-10' : 'pr-10'}
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <EyeOffIcon className="h-4 w-4" />
-                ) : (
-                  <EyeIcon className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
-            {errors.password && (
-              <p className="text-sm text-red-500">{errors.password}</p>
-            )}
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="rememberMe"
-              checked={formData.rememberMe}
-              onCheckedChange={checked =>
-                handleInputChange('rememberMe', checked === true)
-              }
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>비밀번호</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        autoComplete="current-password"
+                        placeholder="비밀번호를 입력하세요"
+                        className="pr-10"
+                        {...field}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
+                        onClick={() => setShowPassword(v => !v)}
+                        aria-label={
+                          showPassword ? '비밀번호 숨기기' : '비밀번호 보기'
+                        }
+                      >
+                        {showPassword ? (
+                          <EyeOffIcon className="h-4 w-4" />
+                        ) : (
+                          <EyeIcon className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <Label
-              htmlFor="rememberMe"
-              className="cursor-pointer text-sm font-normal"
-            >
-              로그인 상태 유지
-            </Label>
-          </div>
 
-          <Button type="submit" className="w-full">
-            로그인하기
-          </Button>
-        </form>
+            <FormField
+              control={form.control}
+              name="rememberMe"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center space-y-0 space-x-2">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel className="cursor-pointer text-sm font-normal">
+                    로그인 상태 유지
+                  </FormLabel>
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  로그인 중...
+                </>
+              ) : (
+                '로그인하기'
+              )}
+            </Button>
+          </form>
+        </Form>
 
         <div className="mt-6 text-center">
           <p className="text-muted-foreground text-sm">

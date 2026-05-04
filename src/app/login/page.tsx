@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
+import { Suspense } from 'react'
 
 import { LoginForm } from '@/components/login-form'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export const metadata: Metadata = {
   title: '로그인',
@@ -11,7 +13,12 @@ export default function LoginPage() {
   return (
     <div className="bg-background flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
-        <LoginForm />
+        {/* useSearchParams(returnTo)가 LoginForm 내부에 있으므로 Suspense 필요 */}
+        <Suspense
+          fallback={<Skeleton className="h-[480px] w-full rounded-lg" />}
+        >
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   )

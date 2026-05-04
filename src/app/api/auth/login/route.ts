@@ -35,11 +35,17 @@ export async function POST(request: NextRequest) {
     expiresIn?: number
     refreshExpiresIn?: number
     message?: string
+    code?: string
+    errors?: Record<string, string[]>
   }
 
   if (!upstream.ok || !data.accessToken) {
     return NextResponse.json(
-      { message: data.message ?? 'Login failed' },
+      {
+        message: data.message ?? 'Login failed',
+        code: data.code,
+        errors: data.errors,
+      },
       { status: upstream.status || 401 }
     )
   }

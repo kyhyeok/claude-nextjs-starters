@@ -13,6 +13,7 @@ export const BACKEND_AUTH_PATHS = {
   login: 'auth/login',
   logout: 'auth/logout',
   refresh: 'auth/refresh',
+  signup: 'auth/signup',
   me: 'auth/me',
 } as const
 
