@@ -38,6 +38,7 @@
 - **🚀 Vercel 배포**: `@/docs/guides/deploy-vercel.md` (Vercel + GitHub Actions 분담)
 - **🧪 테스트 가이드**: `@/docs/guides/testing.md` (Vitest + RTL + Playwright)
 - **🌐 i18n 도입 가이드**: `@/docs/guides/i18n.md` (필요 시 도입 절차 — baseline 코드 기본 미포함)
+- **📊 모니터링 가이드**: `@/docs/guides/monitoring.md` (Sentry + Prom/Graf 분담 + ApiError 통합)
 
 ### 일반 가이드
 

@@ -4,7 +4,7 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **📅 최종 업데이트**: 2026-05-04
-**📊 진행 상황**: Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-E + 5-G 완료 ✅ / Phase 5-C/D/F 옵션
+**📊 진행 상황**: Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G 완료 ✅ / Phase 5-D/F 옵션
 
 ---
 
@@ -140,12 +140,16 @@ baseline 코드는 단일 언어 유지. 다국어 필요 시 가이드 따라 1
 - [ ] (도입 시점에) `ApiError.code` → 메시지 매핑 헬퍼
 - [ ] (도입 시점에) 폼 스키마 메시지 키화
 
-### Phase 5-C: 에러 모니터링 / 분석 (추천도 ⭐⭐)
+### Phase 5-C: 모니터링 — 가이드만 baseline에 포함 (도입은 옵션)
 
-- [ ] **Sentry** (프론트엔드 + Edge 통합)
-- [ ] `ApiError` → Sentry 자동 보고 hook (PII 필터링 포함)
-- [ ] **Vercel Analytics** 또는 **PostHog** (선택)
-- [ ] 환경별 비활성화 토글
+baseline 코드는 SDK 미포함. 프로덕션 출시 직전에 가이드 따라 도입.
+
+- ✅ `docs/guides/monitoring.md` 신규 작성 (Prom+Graf vs Sentry 분담 / Sentry 도입 8단계 / 가벼운 대안 5종 비교 / `ApiError` 통합 패턴 / PII 필터링 / 무료 한도 관리 / 백엔드 합의)
+- ✅ CLAUDE.md / PRD.md에 가이드 링크 추가
+- [ ] (도입 시점에) `@sentry/nextjs` 설치 + wizard
+- [ ] (도입 시점에) `client.ts`의 5xx만 captureException
+- [ ] (도입 시점에) `global-error.tsx` + PII 필터링
+- [ ] (도입 시점에) source map 업로드 CI 시크릿
 
 ### Phase 5-D: 컴포넌트 카탈로그 (추천도 ⭐)
 

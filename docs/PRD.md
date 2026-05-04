@@ -177,6 +177,7 @@ DX           ESLint 9, Prettier, Husky, lint-staged, server-only
 - 🚀 **Vercel 배포**: [`./guides/deploy-vercel.md`](./guides/deploy-vercel.md)
 - 🧪 **테스트 가이드**: [`./guides/testing.md`](./guides/testing.md)
 - 🌐 **i18n 도입 가이드**: [`./guides/i18n.md`](./guides/i18n.md) (옵션 — 필요 시)
+- 📊 **모니터링 가이드**: [`./guides/monitoring.md`](./guides/monitoring.md) (Sentry + Prom/Graf 분담)
 - 🎨 **스타일링**: [`./guides/styling-guide.md`](./guides/styling-guide.md)
 - 🧩 **컴포넌트 패턴**: [`./guides/component-patterns.md`](./guides/component-patterns.md)
 - ⚡ **Next.js 16**: [`./guides/nextjs-16.md`](./guides/nextjs-16.md)
