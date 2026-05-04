@@ -172,7 +172,7 @@ DX           ESLint 9, Prettier, Husky, lint-staged, server-only
 - 📁 **프로젝트 구조**: [`./guides/project-structure.md`](./guides/project-structure.md)
 - 🔌 **API 통신 패턴**: [`./guides/api-pattern.md`](./guides/api-pattern.md)
 - 🔐 **인증 패턴**: [`./guides/auth-pattern.md`](./guides/auth-pattern.md)
-- 🧪 **MSW 모킹**: [`./guides/mocking-msw.md`](./guides/mocking-msw.md)
+- 🃏 **MSW 모킹**: [`./guides/mocking-msw.md`](./guides/mocking-msw.md)
 - 🔗 **백엔드 스펙 통합**: [`./guides/backend-spec-integration.md`](./guides/backend-spec-integration.md)
 - 🚀 **Vercel 배포**: [`./guides/deploy-vercel.md`](./guides/deploy-vercel.md)
 - 🧪 **테스트 가이드**: [`./guides/testing.md`](./guides/testing.md)

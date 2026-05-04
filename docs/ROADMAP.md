@@ -4,7 +4,13 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **📅 최종 업데이트**: 2026-05-04
-**📊 진행 상황**: Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H 완료 ✅ / Phase 5-D/F 옵션
+**📊 진행 상황**: 🔒 **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H 완료 ✅ / Phase 5-D/F 옵션 (도입은 *실제 필요 시점*에)
+
+> 🔒 **baseline은 마감되었습니다.** 이후 작업은:
+>
+> - 새 도메인 추가 → ROADMAP에 기록하지 않고 *절차*로 진행 (아래 _도메인 추가 표준 절차_ 참조)
+> - 옵션 Phase(5-D/F) 도입 → 도입 시점에 이 ROADMAP의 *완료 Phase*로 이동
+> - i18n / Sentry / OAuth 콜백 등 _가이드만 있는_ 항목 → 실제 도입 시 가이드 따라 진행
 
 ---
 
@@ -104,6 +110,22 @@
 - ✅ `.gitignore`에 test-results/, playwright-report/ 등 추가
 - ✅ 검증: `npm run test` (8/8) + `npm run test:e2e` (4/4) 통과
 
+### Phase 5-E: GitHub Actions CI + Vercel 배포 가이드 ✅
+
+- ✅ `.github/workflows/ci.yml` 작성 (check + build, concurrency cancel-in-progress)
+- ✅ Phase 5-A 도입 후 test/e2e job 활성화 + Playwright 브라우저 캐싱 + report 아티팩트
+- ✅ `docs/guides/deploy-vercel.md` 신규 작성 (책임 분담/환경변수/Runtime/함정)
+- ✅ Branch Protection 셋업 가이드 포함
+- ✅ CLAUDE.md / PRD.md에 가이드 링크 추가
+
+### Phase 5-G: Mobile-First 보강 ✅
+
+- ✅ `docs/guides/styling-guide.md`에 mobile-first 원칙/단계별 워크플로우/패턴 6선/함정 5선/체크리스트 추가
+- ✅ `src/app/layout.tsx`에 `viewport` export 추가 (`width=device-width`, `initialScale=1`, `themeColor` light/dark)
+- ✅ `playwright.config.ts`에 `mobile-ios`(iPhone 14) + `mobile-android`(Pixel 7) 프로젝트 추가
+- ✅ 모바일 프로젝트는 chromium 엔진으로 실행 (회귀 방지 충분, webkit은 옵션)
+- ✅ 검증: E2E 12/12 통과 (desktop + mobile-ios + mobile-android 각 4건)
+
 ### Phase 5-H: 운영 준비 보강 (헬스체크 + Request ID + CSP) ✅
 
 baseline의 *운영 단계 빈틈*을 코드 + 가이드로 보강.
@@ -118,22 +140,6 @@ baseline의 *운영 단계 빈틈*을 코드 + 가이드로 보강.
   - X-DNS-Prefetch-Control
   - Content-Security-Policy (환경별 동적 — dev/prod 분기)
 - ✅ `docs/guides/security-headers.md` 신규 (헤더 8종 + CSP 정책 + 외부 도메인 추가 절차 + nonce 마이그레이션 + Report-Only + X-Request-ID 흐름 + 헬스체크 + 함정 6종)
-- ✅ CLAUDE.md / PRD.md에 가이드 링크 추가
-
-### Phase 5-G: Mobile-First 보강 ✅
-
-- ✅ `docs/guides/styling-guide.md`에 mobile-first 원칙/단계별 워크플로우/패턴 6선/함정 5선/체크리스트 추가
-- ✅ `src/app/layout.tsx`에 `viewport` export 추가 (`width=device-width`, `initialScale=1`, `themeColor` light/dark)
-- ✅ `playwright.config.ts`에 `mobile-ios`(iPhone 14) + `mobile-android`(Pixel 7) 프로젝트 추가
-- ✅ 모바일 프로젝트는 chromium 엔진으로 실행 (회귀 방지 충분, webkit은 옵션)
-- ✅ 검증: E2E 12/12 통과 (desktop + mobile-ios + mobile-android 각 4건)
-
-### Phase 5-E: GitHub Actions CI + Vercel 배포 가이드 ✅
-
-- ✅ `.github/workflows/ci.yml` 작성 (check + build, concurrency cancel-in-progress)
-- ✅ Phase 5-A 도입 시 활성화할 test job을 주석으로 미리 골격 포함
-- ✅ `docs/guides/deploy-vercel.md` 신규 작성 (책임 분담/환경변수/Runtime/함정)
-- ✅ Branch Protection 셋업 가이드 포함
 - ✅ CLAUDE.md / PRD.md에 가이드 링크 추가
 
 ---
