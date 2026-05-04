@@ -1,88 +1,179 @@
-# 📝 MVP PRD 생성 메타 프롬프트
+# 📋 Baseline Frontend Starter — Product Requirements
 
-> **사용 방법**: 아래 프롬프트 전체를 복사하여 `prd-generator` 에이전트(또는 LLM)에 입력하면, 본 프로젝트의 MVP PRD가 `@.claude/agents/docs/prd-generator.md` 가이드라인에 따라 생성됩니다.
-
----
-
-## 🎯 메타 프롬프트
-
-```
-당신은 1인 개발자를 위한 PRD 생성 전문가입니다.
-`@.claude/agents/docs/prd-generator.md`에 정의된 모든 규칙·템플릿·정합성 검증 체크리스트를 **반드시** 준수하여 PRD를 작성하세요.
-
-# 프로젝트: 노션 기반 견적서 웹 뷰어 (NotionQuote)
-
-## 📌 프로젝트 개요
-- **한 줄 요약**: 노션(Notion)에 작성한 견적서 내용을 클라이언트가 별도 가입 없이 웹 링크로 열람하고 PDF로 다운로드할 수 있는 서비스
-- **운영 주체**: 1인 프리랜서/소상공인 (견적서를 자주 발행하는 디자이너, 개발자, 컨설턴트 등)
-- **클라이언트 사용자**: 견적을 받는 고객 (가입 불필요, 링크로만 접근)
-
-## 🧩 핵심 시나리오 (반드시 PRD에 반영)
-1. **공급자(Owner)**: 노션 데이터베이스에 견적서 페이지를 작성한다
-2. **공급자(Owner)**: 본 서비스에 로그인 후 노션 페이지 ID(또는 URL)를 등록하면 공유 가능한 웹 링크가 발급된다
-3. **클라이언트(Viewer)**: 받은 링크로 접속해 별도 로그인 없이 견적서를 웹에서 열람한다
-4. **클라이언트(Viewer)**: "PDF 다운로드" 버튼 클릭 시 견적서를 PDF로 받아 저장한다
-5. **공급자(Owner)**: 발급한 견적서 링크 목록을 대시보드에서 확인하고, 만료/비활성화 처리를 할 수 있다
-
-## ⚙️ 도메인 핵심 요소 (기능 명세에 포함)
-- **노션 연동**: Notion API를 통한 페이지 콘텐츠 조회 (공급자 측 Notion 통합 토큰 입력 필요)
-- **견적서 등록**: 노션 페이지 URL 또는 ID 입력 → 파싱 → 공유 슬러그 생성
-- **공개 뷰 페이지**: 로그인 불필요, 슬러그로 접근, 견적 정보(품목/수량/단가/합계/유효기간 등) 렌더링
-- **PDF 변환·다운로드**: 웹 뷰와 동일한 레이아웃의 PDF 즉시 생성/다운로드
-- **견적 목록 관리**: 공급자가 자신이 발급한 견적 목록 조회, 활성/비활성 토글, 삭제
-- **최소 인증**: 공급자만 회원가입/로그인 (이메일 기반). 클라이언트는 인증 없음.
-
-## 🚫 MVP에서 제외 (제외 목록 섹션에 명시)
-- 결제/전자서명/계약 체결
-- 견적서 PDF에 워터마크/브랜딩 커스터마이징
-- 노션 외 데이터 소스 연동 (Google Docs, Excel 등)
-- 다국어, 다중 통화 변환
-- 알림(이메일/카카오톡) 발송
-- 클라이언트 코멘트/피드백 기능
-- 견적 템플릿 라이브러리
-
-## 📐 작성 시 주의사항 (CRITICAL)
-1. `@.claude/agents/docs/prd-generator.md`의 **"절대 생성하지 말 것"** 항목을 절대 작성하지 말 것
-   (개발 우선순위, 성능 지표, API 라우트, 인프라, 마일스톤, 개발 단계, 워크플로우, 보안 요구사항, 페르소나 금지)
-2. **출력 템플릿**(7개 섹션: 핵심 정보, 사용자 여정, 기능 명세, 메뉴 구조, 페이지별 상세 기능, 데이터 모델, 기술 스택)을 그대로 따를 것
-3. **기능 ID(F001, F002 …)**를 모든 기능에 부여하고, 메뉴 구조·페이지별 상세 기능과 양방향 매핑할 것
-4. URL 경로는 작성하지 말고 **페이지 이름만** 사용할 것
-5. **공급자 메뉴**와 **클라이언트(공개) 뷰**를 메뉴 구조에서 명확히 분리할 것
-6. 기술 스택은 **반드시 최신 버전**으로:
-   - Next.js 16.2.4 (App Router + Turbopack)
-   - React 19.2.5
-   - TypeScript 5
-   - TailwindCSS v4
-   - shadcn/ui (new-york)
-   - React Hook Form + Zod
-   - Supabase (인증/DB)
-   - Notion API (`@notionhq/client`)
-   - PDF 생성 라이브러리 (예: `@react-pdf/renderer` 또는 Puppeteer 기반)
-   - Vercel 배포
-7. 데이터 모델은 최소 **User / Quote / NotionConnection** 정도를 포함하되 프로젝트에 적합하게 설계
-8. PRD 작성 완료 후 **정합성 검증 체크리스트 4단계**를 반드시 실행하고, 위반 시 수정 후 재검증할 것
-
-## 📤 출력 형식
-- 결과는 **마크다운 PRD 단일 문서**로 출력
-- A4 2페이지 분량 이내
-- 코드블록·표·이모지(템플릿에 정의된 범위 내)는 적극 사용
-
-위 조건을 모두 만족하는 "노션 기반 견적서 웹 뷰어 (NotionQuote)" MVP PRD를 지금 생성하세요.
-```
+> 이 문서는 **claude-nextjs-starters 자체의 정체성과 제공 기능**을 정의합니다.
+> 새 프로젝트를 시작할 때 이 스타터를 그대로 클론해 사용하며, 도메인별 PRD는 별도로 작성합니다.
 
 ---
 
-## 🛠️ 사용 예시
+## 🎯 한 줄 요약
+
+**외부 백엔드(Java/Kotlin/Nest 등)와 통신하는 모든 프론트엔드 프로젝트의 공통 기반**을 제공하는 Next.js 16 + React 19 baseline 스타터.
+
+## 🧭 설계 원칙 (우선순위 순)
+
+1. **안정성 (Stability)** — 도구 변경/버전 업그레이드에 강한 구조
+2. **유지보수성 (Maintainability)** — 새 멤버가 1일 내 패턴을 파악할 수 있는 명시성
+3. **보안 (Security)** — XSS·CSRF·토큰 노출 등 기본 보안 사항이 코드에 박힘
+4. **성능 (Performance)** — 위 3가지를 해치지 않는 선에서
+
+## 🚫 비-목표 (Non-Goals)
+
+- 특정 도메인(이커머스, SaaS, 블로그 등)에 특화된 기능
+- 풀스택 프레임워크(자체 백엔드 / DB / ORM 포함)
+- 단기 속도 최우선 — 보일러플레이트 0을 추구하지 않음
+- 모든 가능한 라이브러리 동봉 — 필요 시점에 추가 권장
+
+## 👤 대상 사용자
+
+- 다수 프로젝트의 **동일한 baseline**을 사용하려는 1인/소규모 팀
+- 백엔드(Java/Kotlin/Nest)는 **별도 프로젝트**에서 진행하며 OpenAPI 스펙으로 계약을 노출하는 환경
+- 도메인이 다양해도(공공 API, 이커머스, SaaS 등) **같은 통신/인증/모킹 패턴**을 유지하고 싶은 개발자
+
+---
+
+## 🏗 핵심 제공 기능
+
+### 1. UI 셸 (이미 동봉됨)
+
+| 영역          | 라이브러리                                        | 설명                                               |
+| ------------- | ------------------------------------------------- | -------------------------------------------------- |
+| 프레임워크    | Next.js 16.2.4 (App Router + Turbopack)           | 서버/클라이언트 컴포넌트 분리, RSC 우선            |
+| 런타임        | React 19.2.5 + TypeScript 5                       | strict 모드                                        |
+| 스타일링      | TailwindCSS v4 + shadcn/ui (new-york)             | 다크모드(next-themes), prettier-plugin-tailwindcss |
+| UI 프리미티브 | Radix UI + Lucide Icons + sonner                  | shadcn 18종 컴포넌트                               |
+| 폼            | React Hook Form 7 + Zod 4 + `@hookform/resolvers` | shadcn `Form` 통합                                 |
+| DX            | ESLint 9 + Prettier + Husky + lint-staged         | `npm run check-all` 통합                           |
+
+### 2. 데이터 페칭 레이어
+
+- **HTTP 코어**: `ky` 인스턴스 (`src/lib/api/client.ts`)
+  - 401 자동 리프레시 인터셉터 (단일 in-flight 보장)
+  - 4xx/5xx → `ApiError` 정규화 throw
+  - 4xx 재시도 차단, 5xx/네트워크 1회 재시도
+- **상태 관리**: TanStack Query 5 (`src/lib/query/get-query-client.ts`)
+  - 서버=요청별 인스턴스 / 브라우저=싱글톤
+  - `HydrationBoundary` 기반 SSR prefetch 지원
+- **코드 생성**: orval + `client: 'fetch'` + custom mutator
+  - `npm run gen:api` 한 번에 typed 함수 + 스키마 + MSW 핸들러
+  - 우리 ky 인스턴스로 라우팅 (모든 호출이 동일 보안 파이프라인 통과)
+
+### 3. 인증 & 보호 라우트
+
+- **httpOnly 쿠키 + sameSite=lax + secure[prod]** — XSS/CSRF 1차 방어
+- **Route Handler 프록시** (`/api/proxy/[...path]`)
+  - 백엔드 절대 URL이 클라이언트 번들에 노출되지 않음 (`BACKEND_API_BASE_URL` 서버 전용)
+  - 모든 메서드 catch-all 포워딩
+- **인증 흐름**:
+  - `POST /api/auth/login` → 쿠키 저장
+  - `POST /api/auth/logout` → 쿠키 클리어
+  - `POST /api/auth/refresh` → access/refresh 갱신 (401 인터셉터가 자동 호출)
+- **`src/proxy.ts`** (Next.js 16 신 컨벤션, 구 middleware) — 매처 기반 보호 라우트
+- 클라이언트 훅: `useSession` / `useLogin` / `useLogout`
+- 서버 헬퍼: `getSession()` (server-only)
+
+### 4. API 모킹 (MSW v2)
+
+- `NEXT_PUBLIC_API_MOCK_ENABLED=true` + dev 환경에서만 활성화
+- prod 빌드는 dynamic import로 mock/handlers/faker가 **번들에서 제외**
+- orval이 OpenAPI 스펙 기반 핸들러 자동 생성 (`*.msw.ts`)
+- 백엔드 미구동 상태에서 프론트 선행 개발 가능
+
+### 5. 도메인 표준 패턴 (`src/features/<도메인>/`)
+
+| 파일           | 역할                                     |
+| -------------- | ---------------------------------------- |
+| `keys.ts`      | Query Key Factory (hierarchical)         |
+| `queries.ts`   | `useXxxQuery` 훅                         |
+| `mutations.ts` | `useXxxMutation` 훅 + 캐시 무효화        |
+| `index.ts`     | 단일 진입점 (generated 직접 import 금지) |
+
+> **핵심 컨벤션**: 컴포넌트는 항상 `@/features/<도메인>`에서만 import. generated/\* 직접 사용 금지.
+
+---
+
+## 📐 사용 시나리오
+
+### 시나리오 A — 새 프로젝트 시작
 
 ```bash
-# Claude Code에서
-/agents prd-generator
-# 위 메타 프롬프트 전체 복사 → 붙여넣기 → 실행
+git clone <this-starter> my-new-project
+cd my-new-project
+cp .env.example .env.local      # BACKEND_API_BASE_URL 입력
+npm install
+npm run dev
 ```
 
-또는 일반 대화창에서 메타 프롬프트를 그대로 입력해도 동일한 PRD가 생성됩니다.
+### 시나리오 B — 새 도메인(예: products) 추가
 
-## 📎 참고 문서
+1. 백엔드의 OpenAPI 스펙을 `openapi/example.yaml`에 덮어쓰기
+2. `npm run gen:api` → typed 함수 + 스키마 + MSW 핸들러 자동 생성
+3. `src/features/products/`에 `keys.ts`, `queries.ts`, `mutations.ts`, `index.ts` 작성 (users 폴더 복사가 가장 빠름)
+4. (선택) 보호 라우트라면 `src/proxy.ts`의 `config.matcher`에 추가
+5. 컴포넌트에서 `import { useProductsQuery } from '@/features/products'`
 
-- PRD 작성 규칙: `@.claude/agents/docs/prd-generator.md`
-- 프로젝트 기술 가이드: `@CLAUDE.md`
+### 시나리오 C — 백엔드 미완성 상태에서 프론트 선행
+
+1. `.env.local`에 `NEXT_PUBLIC_API_MOCK_ENABLED=true`
+2. `openapi/example.yaml`에 예상 엔드포인트/스키마 정의
+3. `npm run gen:api` → MSW 핸들러 자동 생성
+4. `npm run dev` → 백엔드 없이 mock 응답으로 UI 개발
+
+---
+
+## 📊 데이터 모델 (도메인 무관 공통)
+
+이 스타터는 **사용자/세션을 제외하면 도메인 모델을 강제하지 않습니다**.
+
+### 인증 모델 (외부 백엔드 응답 기본 계약)
+
+| 엔티티      | 필드                                                             | 비고                                                         |
+| ----------- | ---------------------------------------------------------------- | ------------------------------------------------------------ |
+| 로그인 응답 | `accessToken`, `refreshToken`, `expiresIn?`, `refreshExpiresIn?` | 백엔드가 다른 형태면 `app/api/auth/*/route.ts`의 매핑만 수정 |
+| 세션 사용자 | `id`, `email?`, `name?`, `[key]: unknown`                        | `SessionUser` 타입                                           |
+| 에러 응답   | `message`, `code?`                                               | `ApiError`로 정규화                                          |
+
+### 도메인 예시 (`openapi/example.yaml`)
+
+`User`, `UserPage`, `CreateUserInput`, `ErrorResponse`, `ListUsersParams` — 실제 사용 시 백엔드 스펙으로 교체.
+
+---
+
+## 🛠 기술 스택 종합
+
+```
+프레임워크   Next.js 16.2.4 (Turbopack)
+런타임       React 19.2.5 + TypeScript 5
+스타일링     TailwindCSS v4 + shadcn/ui + next-themes
+폼           React Hook Form + Zod
+HTTP         ky 1
+상태         @tanstack/react-query 5
+codegen      orval 7 + @faker-js/faker
+모킹         MSW 2
+인증         httpOnly cookie + Route Handler 프록시 (자체 구현)
+DX           ESLint 9, Prettier, Husky, lint-staged, server-only
+```
+
+---
+
+## ✅ 성공 기준
+
+이 스타터를 baseline으로 새 프로젝트를 시작했을 때:
+
+- [ ] 백엔드와의 통신 로직을 새로 짜지 않음 (orval + features 패턴)
+- [ ] 인증/토큰/리프레시를 새로 구현하지 않음 (Phase 2 그대로 사용)
+- [ ] 백엔드 미구동 상태에서도 프론트 개발이 막히지 않음 (MSW)
+- [ ] 새 멤버가 1일 내 도메인 추가 표준 절차를 따라 작업 가능
+
+---
+
+## 📎 관련 문서
+
+- 🗺 **개발 로드맵**: [`./ROADMAP.md`](./ROADMAP.md)
+- 📁 **프로젝트 구조**: [`./guides/project-structure.md`](./guides/project-structure.md)
+- 🔌 **API 통신 패턴**: [`./guides/api-pattern.md`](./guides/api-pattern.md)
+- 🔐 **인증 패턴**: [`./guides/auth-pattern.md`](./guides/auth-pattern.md)
+- 🧪 **MSW 모킹**: [`./guides/mocking-msw.md`](./guides/mocking-msw.md)
+- 🎨 **스타일링**: [`./guides/styling-guide.md`](./guides/styling-guide.md)
+- 🧩 **컴포넌트 패턴**: [`./guides/component-patterns.md`](./guides/component-patterns.md)
+- ⚡ **Next.js 16**: [`./guides/nextjs-16.md`](./guides/nextjs-16.md)
+- 📝 **폼 처리**: [`./guides/forms-react-hook-form.md`](./guides/forms-react-hook-form.md)

@@ -1,0 +1,124 @@
+openapi: 3.0.3
+info:
+  title: Example API
+  description: |
+    스타터에 동봉된 OpenAPI 예시 스펙입니다.
+    실제 백엔드(Java/Kotlin/Nest)에서 받은 swagger.yaml/json을 이 파일로 대체하거나,
+    orval.config.ts의 input.target을 백엔드 스펙 URL로 변경하세요.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: 로컬 백엔드
+tags:
+  - name: users
+    description: 사용자 도메인 (예시)
+
+paths:
+  /users:
+    get:
+      tags: [users]
+      summary: 사용자 목록 조회
+      operationId: listUsers
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1, minimum: 1 }
+        - name: size
+          in: query
+          schema: { type: integer, default: 20, minimum: 1, maximum: 100 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPage'
+    post:
+      tags: [users]
+      summary: 사용자 생성
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      tags: [users]
+      summary: 사용자 단건 조회
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags: [users]
+      summary: 사용자 삭제
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: No Content
+
+components:
+  schemas:
+    User:
+      type: object
+      required: [id, email, name, createdAt]
+      properties:
+        id: { type: string, example: 'usr_01HABCDEFG' }
+        email: { type: string, format: email, example: 'alice@example.com' }
+        name: { type: string, example: 'Alice' }
+        createdAt: { type: string, format: date-time }
+
+    UserPage:
+      type: object
+      required: [items, page, size, total]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/User' }
+        page: { type: integer, example: 1 }
+        size: { type: integer, example: 20 }
+        total: { type: integer, example: 42 }
+
+    CreateUserInput:
+      type: object
+      required: [email, name]
+      properties:
+        email: { type: string, format: email }
+        name: { type: string, minLength: 1 }
+
+    ErrorResponse:
+      type: object
+      required: [message]
+      properties:
+        message: { type: string }
+        code: { type: string }

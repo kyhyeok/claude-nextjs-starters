@@ -1,6 +1,199 @@
-# React Hook Form + Zod + Server Actions 완전 가이드
+# React Hook Form + Zod 완전 가이드
 
-이 문서는 Next.js 16.2.4에서 React Hook Form + Zod + Server Actions를 활용한 최적의 폼 처리 패턴을 제공합니다.
+이 문서는 Next.js 16.2.4에서 React Hook Form + Zod를 활용한 폼 처리 패턴을 제공합니다.
+
+> 📌 **이 baseline 스타터에서는 외부 백엔드와 통신하므로 mutation 훅 + RHF 패턴이 1차 권장입니다.**
+> 첫 섹션 [**🎯 외부 백엔드 통신 시 폼 패턴 (권장)**](#-외부-백엔드-통신-시-폼-패턴-권장)을 먼저 참고하세요.
+> Server Actions 패턴은 Next.js 자체 폼/내부 라우트 처리 시 사용합니다.
+
+---
+
+## 🎯 외부 백엔드 통신 시 폼 패턴 (권장)
+
+이 스타터의 표준 패턴 — **RHF + Zod + TanStack Query mutation 훅** + features 디렉터리 통합.
+
+### 1) 폼 스키마 정의 (도메인별)
+
+```typescript
+// src/features/users/form-schemas.ts
+import { z } from 'zod'
+
+export const createUserFormSchema = z.object({
+  email: z.string().email('올바른 이메일 형식이 아닙니다'),
+  name: z.string().min(1, '이름을 입력해주세요').max(50, '최대 50자'),
+})
+
+export type CreateUserFormValues = z.infer<typeof createUserFormSchema>
+```
+
+### 2) 컴포넌트에서 RHF + mutation 훅 결합
+
+```typescript
+'use client'
+
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useCreateUser, type CreateUserInput } from '@/features/users'
+import { isApiError } from '@/lib/api/errors'
+import { toast } from 'sonner'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Loader2 } from 'lucide-react'
+import {
+  createUserFormSchema,
+  type CreateUserFormValues,
+} from '@/features/users/form-schemas'
+
+export function CreateUserForm() {
+  const form = useForm<CreateUserFormValues>({
+    resolver: zodResolver(createUserFormSchema),
+    defaultValues: { email: '', name: '' },
+    mode: 'onBlur',
+  })
+
+  const { mutate: createUser, isPending } = useCreateUser()
+
+  const onSubmit = (values: CreateUserFormValues) => {
+    const input: CreateUserInput = values
+    createUser(input, {
+      onSuccess: () => {
+        toast.success('사용자가 생성되었습니다')
+        form.reset()
+      },
+      onError: (error) => {
+        // 서버 검증 실패 → 폼 필드 에러로 매핑
+        if (isApiError(error) && error.details) {
+          const fieldErrors = (error.details as { errors?: Record<string, string[]> }).errors
+          if (fieldErrors) {
+            Object.entries(fieldErrors).forEach(([field, messages]) => {
+              form.setError(field as keyof CreateUserFormValues, {
+                type: 'server',
+                message: messages[0],
+              })
+            })
+            return
+          }
+        }
+        toast.error(isApiError(error) ? error.message : '요청 실패')
+      },
+    })
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>이메일</FormLabel>
+              <FormControl>
+                <Input type="email" autoComplete="email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>이름</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" disabled={isPending} className="w-full">
+          {isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              생성 중...
+            </>
+          ) : (
+            '생성'
+          )}
+        </Button>
+      </form>
+    </Form>
+  )
+}
+```
+
+### 3) 핵심 규칙
+
+- **Zod 스키마는 한 곳에서**: 클라이언트 검증 + 타입 추론 + (선택) 서버 검증 재사용
+- **mutation 훅은 features 레이어에서**: `@/features/<도메인>`에서 import (직접 fetch 금지)
+- **에러 매핑 표준화**: `ApiError.details.errors`의 `Record<string, string[]>`을 `form.setError`로 매핑
+- **성공 후 처리**: `onSuccess`에서 `form.reset()`, toast, 라우팅 등
+- **isPending으로 제출 버튼 비활성화** + 로딩 인디케이터
+
+### 4) 백엔드 검증 에러 응답 계약
+
+이 스타터는 백엔드가 다음 형태로 검증 실패를 내려준다고 가정합니다:
+
+```json
+{
+  "message": "검증 실패",
+  "code": "VALIDATION_ERROR",
+  "errors": {
+    "email": ["이미 사용 중인 이메일입니다"],
+    "name": ["최소 2자 이상이어야 합니다"]
+  }
+}
+```
+
+다른 형태라면 `onError`의 매핑 로직만 수정하세요. 공통 헬퍼로 추출해두면 모든 폼에서 재사용 가능:
+
+```typescript
+// src/lib/forms/api-error-to-form.ts
+import type { UseFormSetError, FieldValues, Path } from 'react-hook-form'
+import { isApiError } from '@/lib/api/errors'
+
+export function applyApiErrorToForm<T extends FieldValues>(
+  error: unknown,
+  setError: UseFormSetError<T>
+): boolean {
+  if (!isApiError(error)) return false
+  const fieldErrors = (error.details as { errors?: Record<string, string[]> })
+    ?.errors
+  if (!fieldErrors) return false
+  Object.entries(fieldErrors).forEach(([field, messages]) => {
+    setError(field as Path<T>, { type: 'server', message: messages[0] })
+  })
+  return true
+}
+```
+
+### 5) 패턴 체크리스트
+
+- [ ] Zod 스키마 단일 정의 (`form-schemas.ts` 또는 도메인 폴더)
+- [ ] mutation 훅은 `@/features/<도메인>`에서 import
+- [ ] 검증 모드 `onBlur` 또는 `onChange` 적절히 선택
+- [ ] `ApiError`는 `isApiError`로 가드 후 분기
+- [ ] 서버 검증 에러를 `form.setError`로 폼 필드에 매핑
+- [ ] 성공/실패 toast 일관된 패턴
+- [ ] 제출 중 버튼 비활성화 + 로딩 인디케이터
+
+---
+
+## 🔧 Server Actions 기반 패턴 (Next.js 자체 라우트용)
+
+> ⚠️ **외부 백엔드와 통신할 때는 위의 mutation 훅 패턴을 사용하세요.**
+> 아래 섹션은 Next.js 내부 라우트나 자체 RSC 흐름에서만 적용합니다.
 
 ## 🚀 기본 설정 및 셋업
 

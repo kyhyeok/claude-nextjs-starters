@@ -39,3 +39,5 @@ Thumbs.db
 
 # Generated files
 next-env.d.ts
+src/lib/api/generated/
+public/mockServiceWorker.js

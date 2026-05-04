@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
+import { MockProvider } from '@/components/providers/mock-provider'
+import { QueryProvider } from '@/components/providers/query-provider'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 
@@ -17,7 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'NextJS Starter - 모던 웹 스타터킷',
   description:
-    'Next.js 15, TypeScript, TailwindCSS, ShadcnUI로 구축된 프로덕션 준비가 완료된 웹 애플리케이션 스타터킷',
+    'Next.js 16.2.4, React 19.2.5, TypeScript, TailwindCSS v4, shadcn/ui로 구축된 프로덕션 준비 웹 애플리케이션 스타터킷',
 }
 
 export default function RootLayout({
@@ -36,8 +38,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
+          <MockProvider>
+            <QueryProvider>
+              {children}
+              <Toaster />
+            </QueryProvider>
+          </MockProvider>
         </ThemeProvider>
       </body>
     </html>

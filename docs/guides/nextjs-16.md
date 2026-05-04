@@ -2,6 +2,45 @@
 
 이 문서는 Claude Code에서 Next.js 16.2.4 프로젝트를 개발할 때 따라야 할 핵심 규칙과 가이드라인을 제공합니다.
 
+---
+
+## ⚡ Next.js 16 주요 변경점 (이 baseline에 적용된 내용)
+
+### `middleware` → `proxy` 컨벤션 변경
+
+Next.js 16에서 `middleware.ts` 파일 컨벤션이 deprecated되고 **`proxy.ts`**로 대체되었습니다.
+이 baseline은 신 컨벤션을 사용합니다 — `src/proxy.ts`를 참조하세요.
+
+```typescript
+// ❌ 구 컨벤션 (Next.js 15까지)
+// src/middleware.ts
+export function middleware(request: NextRequest) { ... }
+
+// ✅ 신 컨벤션 (Next.js 16+)
+// src/proxy.ts
+export function proxy(request: NextRequest) { ... }
+```
+
+마이그레이션:
+
+- 파일명: `middleware.ts` → `proxy.ts`
+- 함수명: `middleware` → `proxy`
+- 자동 마이그레이션: `npx @next/codemod@latest middleware-to-proxy .`
+- `config.matcher` 형식은 동일
+
+자세한 사용법은 [`auth-pattern.md`](./auth-pattern.md)의 _보호 라우트_ 섹션 참조.
+
+### Turbopack 기본 활성화
+
+`next dev --turbopack`, `next build --turbopack`이 baseline에 이미 설정되어 있습니다.
+대부분의 패키지가 호환되나, 일부 SWC 플러그인(예: 일부 babel 변환)은 webpack 모드 fallback이 필요할 수 있습니다.
+
+### Async Request APIs
+
+`cookies()`, `headers()`, `params`, `searchParams` 모두 Promise를 반환합니다 — 아래 _async request APIs 처리_ 섹션 참조.
+
+---
+
 ## 🚀 필수 규칙 (엄격 준수)
 
 ### App Router 아키텍처

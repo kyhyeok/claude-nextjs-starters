@@ -1,123 +1,149 @@
-# NotionQuote 개발 로드맵
+# 🗺 개발 로드맵
 
-노션에 작성한 견적서를 클라이언트가 가입 없이 웹으로 열람하고 PDF로 다운로드할 수 있는 1인 프리랜서용 견적서 공유 서비스입니다.
+> 이 문서는 **claude-nextjs-starters baseline 자체**의 개발 진행 상황과 향후 개선 방향을 추적합니다.
+> 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
-## 개요
+**📅 최종 업데이트**: 2026-05-04
+**📊 진행 상황**: Phase 1~4 완료 ✅ / Phase 5(옵션) 후보 정의
 
-**NotionQuote**는 견적서를 자주 발행하는 1인 프리랜서/소상공인을 위한 노션 기반 견적서 공유 도구로 다음 기능을 제공합니다:
+---
 
-- **노션 연동**: Notion API를 통해 견적서 페이지를 끌어와 자동 렌더링
-- **공개 웹 뷰**: 클라이언트가 가입 없이 링크만으로 견적서 열람
-- **PDF 다운로드**: 웹 뷰와 동일한 레이아웃의 PDF 즉시 생성·다운로드
-- **견적 관리 대시보드**: 공급자가 발급한 견적 링크의 활성/비활성·삭제 관리
+## ✅ 완료된 Phase
 
-## 개발 워크플로우
+### Phase 1: HTTP 클라이언트 코어 + TanStack Query Provider ✅
 
-1. **작업 계획**
-   - 기존 코드베이스를 학습하고 현재 상태를 파악
-   - 새로운 작업을 포함하도록 `ROADMAP.md` 업데이트
-   - 우선순위 작업은 마지막 완료된 작업 다음에 삽입
+- ✅ `@tanstack/react-query` + `@tanstack/react-query-devtools` + `ky` 설치
+- ✅ `src/lib/api/errors.ts` — `ApiError` 클래스 + `isApiError` 가드
+- ✅ `src/lib/api/client.ts` — ky 인스턴스 팩토리 + 4xx/5xx 정규화 + 1회 재시도
+- ✅ `src/lib/query/get-query-client.ts` — 서버=요청별 / 브라우저=싱글톤
+- ✅ `src/components/providers/query-provider.tsx` — Devtools(dev-only) 포함
+- ✅ `src/app/layout.tsx`에 Provider 통합 + 메타데이터 정정
+- ✅ `src/lib/env.ts` — Zod 검증된 환경 변수
+- ✅ `.env.example` 작성
 
-2. **작업 생성**
-   - 기존 코드베이스를 학습하고 현재 상태를 파악
-   - `/tasks` 디렉토리에 새 작업 파일 생성
-   - 명명 형식: `XXX-description.md` (예: `001-setup.md`)
-   - 고수준 명세서, 관련 파일, 수락 기준, 구현 단계 포함
-   - **API/비즈니스 로직 작업 시 "## 테스트 체크리스트" 섹션 필수 포함 (Playwright MCP 테스트 시나리오 작성)**
-   - 예시를 위해 `/tasks` 디렉토리의 마지막 완료된 작업 참조. 예를 들어, 현재 작업이 `012`라면 `011`과 `010`을 예시로 참조.
-   - 이러한 예시들은 완료된 작업이므로 내용이 완료된 작업의 최종 상태를 반영함 (체크된 박스와 변경 사항 요약). 새 작업의 경우, 문서에는 빈 박스와 변경 사항 요약이 없어야 함. 초기 상태의 샘플로 `000-sample.md` 참조.
+### Phase 2: 인증 토큰 흐름 ✅
 
-3. **작업 구현**
-   - 작업 파일의 명세서를 따름
-   - 기능과 기능성 구현
-   - **API 연동 및 비즈니스 로직 구현 시 Playwright MCP로 테스트 수행 필수**
-   - 각 단계 후 작업 파일 내 단계 진행 상황 업데이트
-   - 구현 완료 후 Playwright MCP를 사용한 E2E 테스트 실행
-   - 테스트 통과 확인 후 다음 단계로 진행
-   - 각 단계 완료 후 중단하고 추가 지시를 기다림
+- ✅ `server-only` 패키지 도입 (서버 모듈 마킹)
+- ✅ `src/lib/auth/config.ts` — 쿠키/엔드포인트/만료/라우트 상수
+- ✅ `src/lib/auth/cookies.ts` — httpOnly 쿠키 입출력 (server-only)
+- ✅ `src/lib/auth/session.ts` — `getSession()` 서버 헬퍼
+- ✅ `src/lib/auth/use-auth.ts` — `useSession`/`useLogin`/`useLogout`
+- ✅ `src/app/api/auth/login/route.ts` — 백엔드 위임 + 쿠키 저장
+- ✅ `src/app/api/auth/logout/route.ts` — 쿠키 클리어 + 백엔드 호출
+- ✅ `src/app/api/auth/refresh/route.ts` — 401 인터셉터가 호출
+- ✅ `src/app/api/proxy/[...path]/route.ts` — catch-all 백엔드 프록시
+- ✅ `src/proxy.ts` — Next.js 16 신 컨벤션 보호 라우트 (구 middleware)
+- ✅ ky 인스턴스에 401 자동 리프레시 인터셉터 (단일 in-flight 보장)
 
-4. **로드맵 업데이트**
-   - 로드맵에서 완료된 작업을 ✅로 표시
+### Phase 3: orval + 코드 생성 파이프라인 ✅
 
-## 개발 단계
+- ✅ `orval` + `@faker-js/faker` 설치
+- ✅ `openapi/example.yaml` — 예시 OpenAPI 3.0 스펙 (users 도메인)
+- ✅ `orval.config.ts` — `client: 'fetch'` + custom mutator + MSW mock 자동 생성
+- ✅ `src/lib/api/orval-mutator.ts` — orval ↔ ky 브릿지
+- ✅ `npm run gen:api` 스크립트
+- ✅ `src/lib/api/generated/` 출력 (lint/format 제외 처리)
+- ✅ `src/features/users/` — 도메인 표준 패턴 (keys/queries/mutations/index)
+- ✅ Query Key Factory (hierarchical, tkdodo 패턴)
+- ✅ `.prettierignore`, `eslint.config.mjs`에 generated 디렉터리 제외
 
-### Phase 1: 애플리케이션 골격 구축
+### Phase 4: MSW 설정 + 예시 feature ✅
 
-- **Task 001: 프로젝트 구조 및 라우팅 설정** - 우선순위
-  - Next.js 16 App Router 기반 라우트 그룹 분리: `(auth)`, `(dashboard)`, `(public)`
-  - 공급자 영역 빈 페이지 생성 (로그인, 회원가입, 대시보드, 견적 등록, 견적 상세, 노션 연결 설정)
-  - 클라이언트 공개 뷰 빈 페이지 생성 (견적 공개 뷰, 만료/비활성 안내 페이지)
-  - 공통 레이아웃 골격 구현 (공급자용 사이드바 레이아웃, 공개 뷰용 미니멀 레이아웃)
-  - 글로벌 에러/로딩/낫파운드 페이지 골격 작성
+- ✅ `msw` v2 설치, `npx msw init public/`
+- ✅ orval mock `baseUrl: '/api/proxy'` 설정 (클라이언트 트래픽과 일치)
+- ✅ `src/mocks/handlers.ts` — 도메인 mock 통합
+- ✅ `src/mocks/browser.ts` — `setupWorker`
+- ✅ `src/mocks/init.ts` — dev + 토글 활성화 시에만 시작 (dynamic import)
+- ✅ `src/components/providers/mock-provider.tsx` — worker 준비 후 children 렌더
+- ✅ `src/app/users/page.tsx` — 통합 흐름 데모 페이지
+- ✅ `npm run check-all` + `npm run build` 통과 확인
 
-- **Task 002: 타입 정의 및 데이터 스키마 설계**
-  - `User`, `Quote`, `NotionConnection`, `QuoteShare` TypeScript 인터페이스 정의
-  - 노션 페이지 응답 파싱 타입 (`NotionQuoteBlock`, `QuoteLineItem` 등) 정의
-  - Supabase 테이블 스키마 SQL 작성 (구현 제외, `supabase/schema.sql`로 보관)
-  - Zod 스키마 작성: 견적 등록 폼, 노션 토큰 입력 폼, 인증 폼
-  - PDF 렌더링 데이터 컨트랙트 타입 정의
+### Phase 4.5: 문서 정비 ✅
 
-### Phase 2: UI/UX 완성 (더미 데이터 활용)
+- ✅ NotionQuote 잔재 제거 (PRD/ROADMAP)
+- ✅ baseline 정체성 문서로 PRD 재작성
+- ✅ `docs/guides/project-structure.md` 새 구조 반영
+- ✅ 신규 가이드 작성: `api-pattern.md`, `auth-pattern.md`, `mocking-msw.md`
+- ✅ `forms-react-hook-form.md`에 mutation 훅 패턴 섹션 추가
+- ✅ `nextjs-16.md`에 middleware → proxy 노트 추가
+- ✅ `CLAUDE.md` 가이드 링크/명령어/환경변수 업데이트
+- ✅ `update-roadmap` 명령어 일반화
 
-- **Task 003: 공통 컴포넌트 라이브러리 구현**
-  - shadcn/ui 컴포넌트 추가: `button`, `input`, `form`, `table`, `card`, `dialog`, `dropdown-menu`, `badge`, `toast`, `skeleton`
-  - 도메인 공통 컴포넌트: `QuoteHeader`, `QuoteLineItemTable`, `QuoteSummary`, `QuoteFooter`, `EmptyState`, `CopyLinkButton`
-  - 디자인 토큰 정리 (TailwindCSS v4 `@theme`로 컬러·폰트·라운드 정의)
-  - 더미 견적 데이터 생성 유틸리티 (`lib/dummy/quotes.ts`) 작성
+---
 
-- **Task 004: 모든 페이지 UI 완성 (더미 데이터)**
-  - 공급자 페이지: 로그인/회원가입, 견적 목록 대시보드, 견적 등록 폼, 견적 상세, 노션 연결 설정
-  - 클라이언트 공개 뷰: 견적 열람 페이지(헤더/품목 테이블/합계/유효기간/PDF 다운로드 버튼)
-  - 비활성/만료 견적 안내 페이지
-  - 모바일 반응형 및 인쇄 최적화 스타일 적용
-  - 사용자 플로우 검증 (공급자 가입 → 견적 등록 → 링크 복사 → 클라이언트 열람)
+## 🛣 향후 개선 옵션 (Phase 5 후보)
 
-### Phase 3: 핵심 기능 구현
+> 아래 항목들은 **모든 프로젝트에 필요하지는 않으므로** 필요 시점에 baseline에 통합합니다.
+> 도입 결정 시 이 로드맵의 *완료 Phase*로 이동하고 가이드를 작성합니다.
 
-- **Task 005: Supabase 인증 및 사용자 관리** - 우선순위
-  - Supabase Auth 설정 (이메일/비밀번호 기반)
-  - 회원가입·로그인·로그아웃 Server Action 구현
-  - 미들웨어로 공급자 영역(`(dashboard)`) 보호, 공개 뷰는 비인증 허용
-  - 세션 컨텍스트 및 서버 컴포넌트 사용자 조회 헬퍼 작성
-  - Playwright MCP로 인증 플로우 E2E 테스트 (가입·로그인·보호 라우트·로그아웃)
+### Phase 5-A: 테스트 베이스라인 (추천도 ⭐⭐⭐)
 
-- **Task 006: 노션 연동 및 견적 데이터 파싱**
-  - 공급자별 Notion Integration Token 저장 UI 및 Server Action
-  - `@notionhq/client`로 노션 페이지/데이터베이스 조회 어댑터 구현
-  - 노션 블록 → 견적 도메인 모델(품목/수량/단가/합계/유효기간) 파서 작성
-  - 토큰 유효성 검증 및 에러 핸들링 (권한 부족, 페이지 미공유, 형식 오류)
-  - Playwright MCP로 노션 토큰 등록 → 페이지 ID 입력 → 파싱 결과 표시 시나리오 검증
+- [ ] **Vitest** + `@testing-library/react` + `@testing-library/jest-dom`
+- [ ] `src/test/setup.ts` — RTL + MSW node server 통합
+- [ ] `src/features/users/__tests__/queries.test.tsx` 예시
+- [ ] **Playwright** E2E + 보호 라우트 시나리오
+- [ ] `npm run test`, `npm run test:e2e` 스크립트
+- [ ] CI 가이드 (GitHub Actions 예시)
 
-- **Task 007: 견적 등록 및 공유 링크 발급**
-  - 노션 페이지 URL/ID 입력 → 파싱 → `quotes` 테이블 저장 Server Action
-  - 공유 슬러그(고유 무작위 문자열) 생성 및 충돌 처리
-  - 공급자 대시보드: 견적 목록 조회·활성/비활성 토글·삭제
-  - 만료일·비활성화 견적 접근 시 안내 페이지 라우팅 처리
-  - Playwright MCP로 등록 → 링크 복사 → 클라이언트 열람 → 비활성화 후 차단까지 E2E 검증
+### Phase 5-B: i18n (추천도 ⭐⭐)
 
-- **Task 008: PDF 변환 및 다운로드**
-  - PDF 렌더링 라이브러리 선정 및 통합 (`@react-pdf/renderer` 우선 검토)
-  - 웹 뷰와 동일 레이아웃의 PDF 컴포넌트 트리 작성
-  - 공개 뷰의 "PDF 다운로드" 버튼 → 서버에서 PDF 생성 후 스트리밍 응답
-  - 한글 폰트 임베딩 및 인쇄 시 페이지 분할 검증
-  - Playwright MCP로 다운로드 트리거 및 파일 헤더(`Content-Type: application/pdf`) 검증
+- [ ] **next-intl** 도입 (Next.js 16 App Router 호환)
+- [ ] `src/messages/{ko,en}.json` 메시지 분리
+- [ ] 미들웨어 통합 (proxy.ts)
+- [ ] 폼 검증 메시지 i18n
+- [ ] 다국어 라우팅 패턴 (옵션)
 
-- **Task 008-1: 핵심 기능 통합 테스트**
-  - Playwright MCP로 전체 사용자 플로우 회귀 테스트: 가입 → 노션 연결 → 견적 등록 → 클라이언트 열람 → PDF 다운로드 → 비활성화
-  - 엣지 케이스: 잘못된 노션 토큰, 삭제된 노션 페이지, 만료 슬러그, 동시 요청, 한글/특수문자 견적 항목
-  - 에러 핸들링 일관성 점검 (Toast·에러 페이지·Server Action 응답 형식)
+### Phase 5-C: 에러 모니터링 / 분석 (추천도 ⭐⭐)
 
-### Phase 4: 고급 기능 및 최적화
+- [ ] **Sentry** (프론트엔드 + Edge 통합)
+- [ ] `ApiError` → Sentry 자동 보고 hook (PII 필터링 포함)
+- [ ] **Vercel Analytics** 또는 **PostHog** (선택)
+- [ ] 환경별 비활성화 토글
 
-- **Task 009: 사용자 경험 향상**
-  - 견적 링크 QR 코드 생성 및 복사 UX 개선
-  - 견적 열람 횟수 카운팅 및 대시보드 표시
-  - 노션 페이지 변경 시 수동 새로고침(재파싱) 버튼
-  - 다크 모드 지원 및 접근성(WCAG AA) 점검
+### Phase 5-D: 컴포넌트 카탈로그 (추천도 ⭐)
 
-- **Task 010: 성능 최적화 및 배포**
-  - 공개 뷰 페이지 ISR/캐싱 전략 적용 (`revalidateTag` 기반 무효화)
-  - PDF 생성 결과 단기 캐싱 (동일 슬러그 재요청 시 재사용)
-  - Vercel 배포 파이프라인 구성 및 환경 변수 분리 (`development`/`preview`/`production`)
-  - Playwright MCP 기반 E2E 테스트의 CI 통합 (PR마다 핵심 플로우 회귀)
-  - 모니터링: Vercel Analytics + Supabase 로그 연동
+- [ ] **Storybook** v8 (Next.js 16 호환 확인)
+- [ ] shadcn 컴포넌트 스토리 자동 등록 패턴
+- [ ] MSW Storybook addon 통합 (이미 갖춘 mocks 재사용)
+
+### Phase 5-E: CI/CD 베이스라인 (추천도 ⭐⭐)
+
+- [ ] GitHub Actions: `check-all` + `build` PR 검증
+- [ ] Vercel/Cloudflare Pages 배포 가이드
+- [ ] 환경별 시크릿 관리 (dev/preview/prod)
+- [ ] Husky pre-push에 `check-all` 추가 옵션
+
+### Phase 5-F: 클라이언트 전역 상태 (추천도 ⭐)
+
+- [ ] **Zustand** 또는 **Jotai** 패턴 가이드
+- [ ] TanStack Query 캐시와 분리 원칙 (서버 상태 vs 클라이언트 UI 상태)
+- [ ] persist 미들웨어 + SSR hydration 안전 패턴
+
+---
+
+## 🧩 도메인 추가 표준 절차 (반복 작업)
+
+> 새 도메인을 baseline에 추가할 때는 *Phase가 아니라 절차*입니다. ROADMAP에 기록하지 않고 진행하세요.
+
+1. `openapi/<spec>.yaml`에 엔드포인트 추가 → `npm run gen:api`
+2. `src/features/<도메인>/`에 `keys.ts`, `queries.ts`, `mutations.ts`, `index.ts` 작성
+3. (선택) 보호 라우트라면 `src/proxy.ts`의 `config.matcher`에 추가
+4. 컴포넌트에서 `import { useXxxQuery } from '@/features/<도메인>'`
+5. (옵션) `src/mocks/handlers.ts`에 커스텀 mock 추가
+
+자세한 흐름: [`./guides/api-pattern.md`](./guides/api-pattern.md)
+
+---
+
+## 📋 Phase 추가 시 작성 규칙
+
+새 Phase를 시작할 때:
+
+1. 위 *향후 개선 옵션*에서 해당 항목을 *완료된 Phase*로 옮김
+2. 작업 전 체크리스트 작성 (`- [ ]`)
+3. 작업 완료 시 `- [x]` 또는 `✅` 표시
+4. 모든 항목 완료 시 Phase 제목에 `✅` 추가
+5. 문서 상단 _최종 업데이트_ 날짜 갱신
+6. 관련 가이드를 `docs/guides/`에 작성/업데이트
+
+`/update-roadmap` 명령어로 자동화 가능 — 자세히는 `.claude/commands/docs/update-roadmap.md` 참조.

@@ -1,329 +1,300 @@
-# 프로젝트 구조 가이드
+# 📁 프로젝트 구조 가이드
 
-이 문서는 Next.js 16.2.4 프로젝트의 폴더 구조, 파일 조직 및 네이밍 컨벤션을 정의합니다.
+이 문서는 claude-nextjs-starters의 폴더 구조, 디렉터리 책임, 네이밍 컨벤션을 정의합니다.
 
-## 🏗️ 전체 프로젝트 구조
+## 🏗 전체 트리
 
 ```
 claude-nextjs-starters/
-├── docs/                   # 📚 프로젝트 문서
-│   └── guides/            # 개발 가이드 모음
-├── public/                # 🌍 정적 파일 (이미지, 아이콘)
-├── src/                   # 📦 소스 코드 루트
-│   ├── app/              # 🚀 Next.js App Router
-│   ├── components/       # 🧩 React 컴포넌트
-│   └── lib/              # 🛠️ 유틸리티 및 설정
-├── components.json       # shadcn/ui 설정
-├── next.config.ts        # Next.js 설정
-├── package.json          # 의존성 및 스크립트
-├── tsconfig.json         # TypeScript 설정
-└── CLAUDE.md            # 개발 지침 메인 문서
+├── docs/                                # 📚 프로젝트 문서
+│   ├── PRD.md                          #     baseline 정체성 문서
+│   ├── ROADMAP.md                      #     완료/예정 Phase
+│   └── guides/                         #     주제별 가이드
+├── openapi/                             # 📜 OpenAPI 스펙 입력
+│   └── example.yaml                    #     실제 백엔드 스펙으로 교체
+├── public/                              # 🌍 정적 파일
+│   ├── mockServiceWorker.js            #     MSW worker (npx msw init 산출물)
+│   └── ...
+├── src/
+│   ├── app/                            # 🚀 Next.js App Router (페이지 + Route Handler)
+│   ├── components/                     # 🧩 React 컴포넌트
+│   ├── features/                       # 🎯 도메인별 표준 패턴 (queries/mutations/keys)
+│   ├── lib/                            # 🛠 유틸리티 + 인프라 모듈
+│   ├── mocks/                          # 🧪 MSW 핸들러/worker
+│   └── proxy.ts                        # 🛡 Next.js 16 프록시 (구 middleware) — 보호 라우트
+├── orval.config.ts                      # ⚙ codegen 설정
+├── components.json                      # shadcn/ui 설정
+├── next.config.ts                       # Next.js 설정
+├── tsconfig.json                        # TypeScript 설정
+├── eslint.config.mjs                    # ESLint flat config
+├── .env.example                         # 환경변수 템플릿
+└── CLAUDE.md                            # 개발 지침 메인 문서
 ```
 
-## 📁 세부 폴더 구조
+---
 
-### src/app/ - App Router 페이지
+## 📁 src/app/ — App Router
 
 ```
 src/app/
-├── layout.tsx           # 🎨 루트 레이아웃 (전역 설정)
-├── page.tsx            # 🏠 홈페이지 (/)
-├── globals.css         # 🎨 전역 CSS 스타일
-├── favicon.ico         # 🔖 파비콘
-├── login/              # 🔐 로그인 페이지
-│   └── page.tsx
-└── signup/             # ✍️ 회원가입 페이지
-    └── page.tsx
+├── layout.tsx                          # 루트 레이아웃 (Theme/Mock/Query/Toaster Provider)
+├── page.tsx                            # 홈 (/)
+├── globals.css
+├── login/page.tsx                      # 로그인 페이지
+├── signup/page.tsx                     # 회원가입 페이지
+├── users/page.tsx                      # 통합 흐름 데모 (useUsersQuery)
+└── api/
+    ├── auth/
+    │   ├── login/route.ts             # POST /api/auth/login
+    │   ├── logout/route.ts            # POST /api/auth/logout
+    │   └── refresh/route.ts           # POST /api/auth/refresh
+    └── proxy/
+        └── [...path]/route.ts         # /api/proxy/*  catch-all → 백엔드 포워딩
 ```
 
-**🚀 App Router 규칙:**
+**규칙**:
 
-- `page.tsx`: 해당 경로의 메인 페이지
-- `layout.tsx`: 레이아웃 컴포넌트 (자식 페이지 감쌈)
-- `loading.tsx`: 로딩 UI (필요시)
-- `error.tsx`: 에러 UI (필요시)
-- `not-found.tsx`: 404 페이지 (필요시)
+- `page.tsx` / `layout.tsx` / `loading.tsx` / `error.tsx` / `not-found.tsx`는 Next.js App Router 표준 컨벤션
+- Route Handler는 `route.ts` 파일명 고정
+- 클라이언트 호출은 백엔드 절대 URL이 아닌 **`/api/proxy/*`**를 사용 (보안 + 토큰 자동 부착)
 
-### src/components/ - 컴포넌트 조직
+---
+
+## 📁 src/components/
 
 ```
 src/components/
-├── ui/                 # 🎛️ 기본 UI 컴포넌트 (shadcn/ui)
-│   ├── button.tsx     # 버튼
-│   ├── card.tsx       # 카드
-│   ├── form.tsx       # 폼 관련
-│   ├── input.tsx      # 입력 필드
-│   └── ...           # 기타 UI 컴포넌트
-├── layout/            # 🏗️ 레이아웃 컴포넌트
-│   ├── container.tsx  # 컨테이너 래퍼
-│   ├── header.tsx     # 헤더
-│   └── footer.tsx     # 푸터
-├── navigation/        # 🧭 네비게이션 컴포넌트
-│   ├── main-nav.tsx   # 메인 네비게이션
-│   └── mobile-nav.tsx # 모바일 네비게이션
-├── sections/          # 📄 페이지 섹션 컴포넌트
-│   ├── hero.tsx       # 히어로 섹션
-│   ├── features.tsx   # 기능 소개
-│   └── cta.tsx        # Call-to-Action
-├── providers/         # 🔧 Context 프로바이더
-│   └── theme-provider.tsx
-├── login-form.tsx     # 🔐 로그인 폼
-├── signup-form.tsx    # ✍️ 회원가입 폼
-└── theme-toggle.tsx   # 🌓 테마 토글
+├── ui/                                 # shadcn/ui (재사용 기본 컴포넌트, 비즈니스 로직 X)
+├── layout/                             # 페이지 구조 (Container/Header/Footer)
+├── navigation/                         # 메뉴/내비게이션
+├── sections/                           # 페이지 섹션 (Hero/Features/CTA)
+├── providers/                          # React Context Provider
+│   ├── theme-provider.tsx              #   next-themes
+│   ├── query-provider.tsx              #   TanStack Query + Devtools(dev)
+│   └── mock-provider.tsx               #   MSW worker 게이트 (dev + 토글 시)
+├── login-form.tsx                      # 도메인 폼 (RHF + Zod)
+├── signup-form.tsx
+└── theme-toggle.tsx
 ```
 
-**🧩 컴포넌트 분류 규칙:**
+**컴포넌트 분류 규칙**:
 
-1. **ui/**: shadcn/ui 기반 재사용 가능한 기본 컴포넌트
-   - 순수 UI 컴포넌트만 포함
-   - 비즈니스 로직 없음
-   - props로 모든 동작 제어
+1. **`ui/`** — shadcn 기반. props로 모든 동작 제어, 비즈니스 로직 금지
+2. **`layout/`** — Container/Header/Footer 등 페이지 골격
+3. **`navigation/`** — 메뉴/사이드바/페이지네이션
+4. **`sections/`** — 랜딩/마케팅 섹션
+5. **`providers/`** — Context Provider (서버 상태/UI 상태 공유)
+6. **루트** — 도메인 종속 컴포넌트 (`*-form.tsx` 등)
 
-2. **layout/**: 페이지 구조를 담당하는 레이아웃 컴포넌트
-   - 전체 페이지 구조
-   - 공통 헤더/푸터
-   - 컨테이너 래퍼
+---
 
-3. **navigation/**: 네비게이션 관련 컴포넌트
-   - 메뉴, 브레드크럼
-   - 페이지네이션
-   - 사이드바
+## 📁 src/features/ — 도메인 표준 패턴 ⭐
 
-4. **sections/**: 특정 페이지 섹션을 위한 컴포넌트
-   - 홈페이지 섹션들
-   - 랜딩 페이지 블록
-   - 마케팅 컴포넌트
+> **이 스타터의 핵심**. 새 도메인은 항상 이 구조로 추가하세요. 자세한 절차는 [`api-pattern.md`](./api-pattern.md).
 
-5. **providers/**: React Context 프로바이더
-   - 전역 상태 관리
-   - 테마 관리
-   - 인증 상태
+```
+src/features/<도메인>/
+├── keys.ts                             # Query Key Factory (hierarchical)
+├── queries.ts                          # useXxxQuery 훅
+├── mutations.ts                        # useXxxMutation 훅 + 캐시 무효화
+└── index.ts                            # 단일 진입점 (외부에서 import할 곳)
+```
 
-### src/lib/ - 유틸리티 및 설정
+**컨벤션**:
+
+- 컴포넌트는 **항상 `@/features/<도메인>`**에서만 import
+- `src/lib/api/generated/*` 직접 import 금지 (한 단계 추상화 격리)
+- query key는 항상 factory에서 생성 (수동 배열 금지)
+
+---
+
+## 📁 src/lib/ — 유틸리티 + 인프라
 
 ```
 src/lib/
-├── utils.ts           # 🛠️ 공통 유틸리티 함수
-└── env.ts             # 🔧 환경변수 검증
+├── utils.ts                            # 공통 헬퍼 (cn 등)
+├── env.ts                              # Zod 검증된 환경변수
+├── api/                                # 🌐 HTTP 통신 레이어
+│   ├── client.ts                       #   ky 인스턴스 + 401 자동 리프레시
+│   ├── errors.ts                       #   ApiError + isApiError
+│   ├── orval-mutator.ts                #   orval ↔ ky 브릿지
+│   └── generated/                      #   npm run gen:api 산출물 (lint/format 제외)
+│       ├── schemas/                    #     도메인 모델 타입
+│       └── <태그>/                     #     태그별 typed 함수 + MSW 핸들러
+├── auth/                               # 🔐 인증 유틸
+│   ├── config.ts                       #   쿠키/엔드포인트/만료 상수
+│   ├── cookies.ts                      #   server-only · httpOnly 쿠키 입출력
+│   ├── session.ts                      #   server-only · getSession()
+│   └── use-auth.ts                     #   클라 훅: useSession/useLogin/useLogout
+└── query/                              # 🔄 TanStack Query 인프라
+    └── get-query-client.ts             #   서버=요청별 / 브라우저=싱글톤
 ```
 
-**📚 lib/ 폴더 확장 가이드:**
+**확장 가이드**:
+
+- 폼 스키마: `src/lib/schemas/<도메인>.ts` (필요 시 추가)
+- 커스텀 훅: `src/lib/hooks/use-*.ts` (도메인 무관 훅)
+- 상수: `src/lib/constants.ts`
+
+---
+
+## 📁 src/mocks/ — MSW
 
 ```
-src/lib/
-├── utils.ts           # 공통 유틸리티
-├── env.ts             # 환경변수 검증
-├── constants.ts       # 상수 정의
-├── types/             # TypeScript 타입 정의
-│   ├── auth.ts
-│   └── api.ts
-├── hooks/             # 커스텀 훅
-│   ├── use-local-storage.ts
-│   └── use-api.ts
-├── schemas/           # Zod 스키마
-│   ├── auth.ts
-│   └── user.ts
-└── api/               # API 관련 유틸리티
-    ├── client.ts
-    └── endpoints.ts
+src/mocks/
+├── handlers.ts                         # 핸들러 통합 (도메인 mock 모음)
+├── browser.ts                          # setupWorker(...handlers)
+└── init.ts                             # startMSW() — dev + 토글 활성화 시에만
 ```
 
-## 🏷️ 파일 네이밍 컨벤션
+**활성화 조건**: `NEXT_PUBLIC_API_MOCK_ENABLED=true` + `NODE_ENV=development` + 브라우저
+**prod 영향**: 0 — dynamic import로 mock/handlers/faker가 번들에서 제외
 
-### 파일명 규칙
+자세한 사용법은 [`mocking-msw.md`](./mocking-msw.md).
 
-```bash
-# ✅ 올바른 파일명
-user-profile.tsx        # kebab-case (권장)
-UserProfile.tsx         # PascalCase (컴포넌트)
-userProfile.tsx         # camelCase (허용)
+---
 
-# ❌ 잘못된 파일명
-user_profile.tsx        # snake_case (금지)
-userprofile.tsx         # 소문자만 (금지)
-```
+## 📜 src/proxy.ts — 보호 라우트
 
-### 컴포넌트 네이밍
+Next.js 16에서 `middleware.ts`가 `proxy.ts`로 이름 변경되었습니다 (구 컨벤션은 deprecated).
 
 ```typescript
-// ✅ 올바른 컴포넌트 네이밍
-export function UserProfile() {} // PascalCase
-export function LoginForm() {} // PascalCase
-export function APIEndpoint() {} // 약어도 PascalCase
+// src/proxy.ts
+export function proxy(request: NextRequest) { ... }
 
-// ❌ 잘못된 컴포넌트 네이밍
-export function userProfile() {} // camelCase (금지)
-export function login_form() {} // snake_case (금지)
+export const config = {
+  // 보호하고 싶은 경로만 명시적으로 추가
+  matcher: ['/dashboard/:path*', '/login'],
+}
 ```
 
-### 폴더 네이밍
+---
+
+## 🏷 파일/폴더 네이밍
+
+### 파일명 — kebab-case 권장
 
 ```bash
-# ✅ 올바른 폴더명
-components/             # 소문자
-user-settings/          # kebab-case
-api-routes/            # kebab-case
+# ✅ 올바름
+user-profile.tsx
+api-client.ts
+use-debounce.ts
 
-# ❌ 잘못된 폴더명
-Components/            # PascalCase (금지)
-user_settings/         # snake_case (금지)
+# ❌ 금지
+user_profile.tsx        # snake_case
+userprofile.tsx         # 소문자만
+UserProfile.tsx         # PascalCase는 컴포넌트명에만
 ```
+
+### 컴포넌트명 — PascalCase
+
+```typescript
+export function UserProfile() {} // ✅
+export function APIEndpoint() {} // ✅ 약어도 PascalCase
+export function userProfile() {} // ❌
+```
+
+### 폴더명 — kebab-case 또는 소문자
+
+```
+components/
+features/
+api-routes/             # 다단어는 kebab
+```
+
+---
 
 ## 🔗 경로 별칭 (Path Aliases)
 
-`components.json`에 정의된 경로 별칭:
+`tsconfig.json`의 `paths`로 정의:
 
 ```typescript
-// ✅ 경로 별칭 사용 (권장)
+// ✅ 권장
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import { LoginForm } from '@/components/login-form'
+import { useUsersQuery } from '@/features/users'
+import { apiClient } from '@/lib/api/client'
+import { getSession } from '@/lib/auth/session'
 
-// ❌ 상대 경로 사용 (금지)
+// ❌ 금지
 import { Button } from '../../../components/ui/button'
-import { cn } from '../../lib/utils'
 ```
 
-**📍 정의된 별칭:**
+**정의된 별칭** (`@/*` → `src/*`):
 
+- `@/app` → `src/app`
 - `@/components` → `src/components`
+- `@/features` → `src/features` ⭐
 - `@/lib` → `src/lib`
-- `@/hooks` → `src/hooks`
-- `@/ui` → `src/components/ui`
-- `@/utils` → `src/lib/utils`
+- `@/mocks` → `src/mocks`
 
-## 📝 새 파일/폴더 추가 규칙
+---
 
-### 1. 새 UI 컴포넌트 추가
+## 📝 새 파일 추가 결정 트리
+
+### 새 도메인 (예: products)
+
+```
+1. openapi/example.yaml에 엔드포인트 추가
+2. npm run gen:api  →  src/lib/api/generated/products/ 생성
+3. src/features/products/ 작성 (users 폴더 복사 후 도메인명만 변경)
+4. 컴포넌트에서 @/features/products import
+```
+
+### 새 페이지
+
+```
+src/app/<경로>/page.tsx
+```
+
+### 새 UI 컴포넌트
 
 ```bash
-# shadcn/ui 컴포넌트 추가
-npx shadcn@latest add [component-name]
+# shadcn 컴포넌트
+npx shadcn@latest add <name>
 
-# 커스텀 UI 컴포넌트 추가
-src/components/ui/custom-component.tsx
+# 도메인 컴포넌트
+src/components/<도메인>-<역할>.tsx
 ```
 
-### 2. 새 페이지 추가
+### 새 Provider
 
-```bash
-# 정적 페이지
-src/app/about/page.tsx
-
-# 동적 페이지
-src/app/users/[id]/page.tsx
-
-# 그룹 라우트
-src/app/(auth)/login/page.tsx
+```
+src/components/providers/<name>-provider.tsx
+src/app/layout.tsx에서 통합
 ```
 
-### 3. 새 비즈니스 컴포넌트 추가
+### 새 도메인 훅 (도메인 외부에서 쓰는 일반 훅)
 
-```bash
-# 위치 결정 기준:
-1. 특정 페이지에서만 사용 → 해당 페이지 폴더 내
-2. 여러 페이지에서 사용 → components/ 적절한 카테고리
-3. 레이아웃 관련 → components/layout/
-4. 네비게이션 관련 → components/navigation/
+```
+src/lib/hooks/use-<name>.ts
 ```
 
-### 4. 새 유틸리티 추가
+---
 
-```bash
-# 공통 유틸리티
-src/lib/utils.ts            # 기존 파일에 추가
+## 🚫 금지 구조
 
-# 특화된 유틸리티
-src/lib/date-utils.ts       # 새 파일 생성
-src/lib/api-utils.ts        # 새 파일 생성
 ```
-
-## 🎯 코드 조직 베스트 프랙티스
-
-### 1. 단일 책임 원칙
-
-- 하나의 파일은 하나의 주요 기능만 담당
-- 관련된 타입과 유틸리티는 같은 파일에 포함 가능
-
-### 2. 의존성 순서
-
-```typescript
-// 1. 외부 라이브러리
-import React from 'react'
-import { NextPage } from 'next'
-
-// 2. 내부 라이브러리 (@/ 경로)
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-
-// 3. 상대 경로
-import './component.css'
-```
-
-### 3. Export 규칙
-
-```typescript
-// ✅ Named export 사용 (권장)
-export function LoginForm() {}
-
-// ✅ Default export (페이지 컴포넌트)
-export default function LoginPage() {}
-
-// ❌ 혼재 사용 지양
-export function LoginForm() {}
-export default LoginForm // 같은 컴포넌트를 두 방식으로 export
-```
-
-### 4. 파일 크기 관리
-
-- 단일 파일: 300줄 이하 권장
-- 300줄 초과 시 분할 고려
-- 관련 기능별로 분리
-
-## 🚫 금지사항
-
-### ❌ 피해야 할 구조
-
-```bash
-# 깊은 중첩 구조 (4단계 이상)
+# ❌ 깊은 중첩 (4단계 이상)
 src/components/pages/auth/forms/login/LoginForm.tsx
 
-# 의미 없는 폴더명
+# ❌ 의미 없는 폴더명
 src/components/misc/
 src/components/common/
 src/components/shared/
 
-# 혼재된 케이스
-src/Components/userProfile/LoginForm.tsx
+# ❌ generated 코드를 features 우회 직접 import
+import { listUsers } from '@/lib/api/generated/users/users'  // 컴포넌트에서 금지
 ```
 
-### ❌ 피해야 할 패턴
+---
 
-```typescript
-// 거대한 파일
-export function SuperMegaComponent() {
-  // 500줄 이상의 코드
-}
+## ✅ 새 파일 추가 체크리스트
 
-// 혼재된 import
-import Button from '@/components/ui/button' // default
-import { Card } from '@/components/ui/card' // named
-
-// 깊은 상대 경로
-import { utils } from '../../../../../lib/utils'
-```
-
-## ✅ 체크리스트
-
-새 파일/폴더 추가 시 확인사항:
-
-- [ ] 적절한 카테고리 폴더에 배치
-- [ ] kebab-case 파일명 사용
-- [ ] PascalCase 컴포넌트명 사용
-- [ ] 경로 별칭 사용
-- [ ] 단일 책임 원칙 준수
-- [ ] 적절한 export 방식 선택
-- [ ] 의존성 import 순서 준수
-- [ ] 파일 크기 300줄 이하 유지
-
-이 가이드를 따라 일관성 있고 유지보수하기 쉬운 프로젝트 구조를 만들어보세요!
+- [ ] 적절한 디렉터리에 배치
+- [ ] kebab-case 파일명
+- [ ] 경로 별칭 사용 (상대 경로 X)
+- [ ] 컴포넌트명 PascalCase
+- [ ] features/ 사용 시 generated 직접 import 안 함
+- [ ] server-only 모듈은 `import 'server-only'` 첫 줄
+- [ ] 단일 책임 원칙
+- [ ] 300줄 이하 (300줄 초과 시 분리 고려)
