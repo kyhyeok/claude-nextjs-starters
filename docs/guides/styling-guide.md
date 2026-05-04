@@ -2,6 +2,146 @@
 
 이 문서는 TailwindCSS v4 + shadcn/ui를 활용한 스타일링 규칙과 모범 사례를 제공합니다.
 
+---
+
+## 📱 Mobile-First 원칙 (★ 필독)
+
+이 baseline은 **모바일 우선(mobile-first)** 작성 방식을 채택합니다. Tailwind / shadcn / next-themes 모두 이 방식과 자연스럽게 맞물립니다.
+
+### 핵심 컨벤션
+
+| 항목                        | 규칙                                           |
+| --------------------------- | ---------------------------------------------- |
+| **베이스 클래스**           | 모바일 스타일 (375px 기준)                     |
+| **`sm:` `md:` `lg:` `xl:`** | *그 너비 이상*에서 적용 — 모바일 위에 _덧붙임_ |
+| **터치 타겟**               | 모바일 최소 44px (Apple HIG) — 버튼/링크 크기  |
+| **폰트 베이스**             | 16px 이상 (iOS 자동 줌인 방지)                 |
+| **가로 스크롤**             | **절대 금지** — 모든 viewport에서              |
+
+### 단계별 작업 흐름
+
+#### Step 1 — 디자인/와이어프레임 확보
+
+- 모바일 + PC 시안 _둘 다_ 받기. 하나만 있으면 충돌 발생
+- 디자인 부재 시 와이어프레임을 **모바일부터** 그림
+
+#### Step 2 — 브레이크포인트 합의
+
+- Tailwind 기본: `sm:640 / md:768 / lg:1024 / xl:1280 / 2xl:1536`
+- 4개로 충분: 모바일 / 태블릿 / PC / 와이드
+
+#### Step 3 — HTML 구조 설계
+
+- **같은 HTML로 모바일/PC 모두 표현** 가능하게
+- 모바일은 _세로 선형_, PC는 *가로 분할*이 가장 흔한 변형
+
+#### Step 4 — 모바일 스타일 먼저 작성
+
+- viewport 375px 기준
+- 터치 타겟 44px+, 폰트 16px+, 가로 스크롤 0
+
+#### Step 5 — `md:` `lg:`로 _덧붙임_ (override 아님)
+
+- 레이아웃: `flex-col md:flex-row`, `grid-cols-1 lg:grid-cols-3`
+- 폰트/간격: `text-base lg:text-xl`, `p-4 lg:p-8`
+- 노출 토글: `<MobileNav className="md:hidden" />` + `<DesktopNav className="hidden md:flex" />`
+
+#### Step 6 — 검증
+
+- DevTools 디바이스 모드: 360 / 375 / 414 / 768 / 1024 / 1280 / 1920
+- **실제 디바이스 1회 이상** (Mobile Safari/Chrome은 가상 디바이스와 미묘하게 다름)
+- Playwright E2E의 `mobile-ios` / `mobile-android` 프로젝트 활용 (자동 회귀 방지)
+
+---
+
+## 🧩 자주 쓰는 Mobile-First 패턴 6선
+
+```tsx
+// 1) 컨테이너 패딩
+<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+
+// 2) 그리드 컬럼 변환
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+
+// 3) flex 방향 전환 (모바일=세로, PC=가로)
+<div className="flex flex-col md:flex-row md:items-center md:gap-8">
+
+// 4) 폰트 스케일
+<h1 className="text-2xl md:text-3xl lg:text-5xl">
+
+// 5) 사이드바: 모바일=Drawer/Sheet, PC=고정
+<aside className="hidden lg:block lg:w-64">  {/* PC만 */}
+<Sheet>...</Sheet>                            {/* 모바일 햄버거 */}
+
+// 6) 터치 타겟 (모바일 48px, PC 40px)
+<Button className="h-12 md:h-10">
+```
+
+---
+
+## ⚠️ 흔한 함정 5선
+
+### 1) `max-width` 미디어 쿼리(데스크톱 우선)와 섞기
+
+```tsx
+❌ 'lg:p-8 max-md:p-2'   // mobile-first와 desktop-first 혼용 — 멘탈 모델 깨짐
+✅ 'p-2 lg:p-8'           // mobile-first로 통일
+```
+
+### 2) `sm:hidden`만 사용
+
+```tsx
+❌ <Foo className="sm:hidden" />  // 'sm 이상에서 숨김' = 의도 모호
+✅ <Foo className="hidden md:block" />  // 모바일에서 숨김, 태블릿+ 표시
+✅ <Foo className="md:hidden" />        // 모바일에서 표시, 태블릿+ 숨김
+```
+
+### 3) 데이터 테이블을 모바일에서 그대로
+
+- 가로 스크롤 발생 → UX 최악
+- 해결: 모바일은 _카드_, PC는 _테이블_
+
+```tsx
+<div className="hidden md:block"><DataTable .../></div>
+<div className="md:hidden">{rows.map(r => <Card>{r}</Card>)}</div>
+```
+
+### 4) viewport 메타 태그 누락
+
+- Next.js 16에서는 `viewport` export 사용 (이 baseline의 `app/layout.tsx`에 이미 박혀 있음)
+
+```typescript
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
+```
+
+### 5) `next/image`의 `sizes` 누락
+
+- 모바일에서 데스크톱 크기의 이미지를 다운로드하게 됨 → 대역폭 낭비
+
+```tsx
+<Image
+  src={...}
+  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+/>
+```
+
+---
+
+## ✅ 새 컴포넌트/페이지 작성 체크리스트
+
+- [ ] 모바일(375px)에서 가로 스크롤 없음
+- [ ] 모든 버튼/링크가 터치 친화적 (h-11 이상 권장)
+- [ ] 베이스 클래스가 _모바일_ 스타일, `md:`/`lg:`로 PC 덧붙임
+- [ ] 노출 토글은 `hidden md:block` / `md:hidden` 명시적 패턴
+- [ ] 데이터 테이블은 모바일 카드 fallback 제공
+- [ ] `next/image`의 `sizes` 속성 명시
+- [ ] (선택) Playwright E2E에 `mobile-ios` / `mobile-android` 프로젝트로 회귀 검증
+
+---
+
 ## 🎨 기술 스택 개요
 
 ### 핵심 스타일링 도구

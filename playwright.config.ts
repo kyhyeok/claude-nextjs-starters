@@ -37,7 +37,19 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    // 다른 브라우저가 필요하면 아래 주석 해제:
+    // mobile-first 회귀 방지 — 모바일 viewport에서도 핵심 흐름 검증.
+    // 기본은 chromium 엔진 + iPhone/Pixel viewport(레이아웃 회귀 잡기 충분).
+    // 실제 Safari 특화 버그까지 잡으려면 `npx playwright install webkit` 후
+    // browserName: 'webkit'으로 변경하세요.
+    {
+      name: 'mobile-ios',
+      use: { ...devices['iPhone 14'], browserName: 'chromium' },
+    },
+    {
+      name: 'mobile-android',
+      use: { ...devices['Pixel 7'] },
+    },
+    // 다른 브라우저가 필요하면 아래 주석 해제 (webkit/firefox 별도 설치 필요):
     // { name: 'firefox',  use: { ...devices['Desktop Firefox'] } },
     // { name: 'webkit',   use: { ...devices['Desktop Safari'] } },
   ],

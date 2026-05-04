@@ -4,7 +4,7 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **📅 최종 업데이트**: 2026-05-04
-**📊 진행 상황**: Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-E 완료 ✅ / Phase 5-B/C/D/F 옵션
+**📊 진행 상황**: Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-E + 5-G 완료 ✅ / Phase 5-B/C/D/F 옵션
 
 ---
 
@@ -103,6 +103,14 @@
 - ✅ `docs/guides/testing.md` 신규 작성 (3계층 전략 + 작성 패턴 + 함정 6종)
 - ✅ `.gitignore`에 test-results/, playwright-report/ 등 추가
 - ✅ 검증: `npm run test` (8/8) + `npm run test:e2e` (4/4) 통과
+
+### Phase 5-G: Mobile-First 보강 ✅
+
+- ✅ `docs/guides/styling-guide.md`에 mobile-first 원칙/단계별 워크플로우/패턴 6선/함정 5선/체크리스트 추가
+- ✅ `src/app/layout.tsx`에 `viewport` export 추가 (`width=device-width`, `initialScale=1`, `themeColor` light/dark)
+- ✅ `playwright.config.ts`에 `mobile-ios`(iPhone 14) + `mobile-android`(Pixel 7) 프로젝트 추가
+- ✅ 모바일 프로젝트는 chromium 엔진으로 실행 (회귀 방지 충분, webkit은 옵션)
+- ✅ 검증: E2E 12/12 통과 (desktop + mobile-ios + mobile-android 각 4건)
 
 ### Phase 5-E: GitHub Actions CI + Vercel 배포 가이드 ✅
 
