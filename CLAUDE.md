@@ -181,6 +181,10 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - **📋 PRD (스타터 정체성)**: `@/docs/PRD.md`
 - **🗺 개발 로드맵**: `@/docs/ROADMAP.md`
 
+### 세션 워크플로 (★ 모든 작업 시작 시 필독)
+
+- **🤖 에이전트 워크플로**: `@/docs/guides/agent-workflow.md` — 23개 `.md` 자산을 세션 유형(A/B/C/D)별로 어떻게 호출할지. 매 세션 시작 시 _세션 유형 결정 → 해당 콤보만 사용_
+
 ### 핵심 패턴 (★ 새 도메인 작업 시 필독)
 
 - **🔌 API 통신 패턴**: `@/docs/guides/api-pattern.md`
