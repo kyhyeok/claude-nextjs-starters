@@ -37,6 +37,7 @@
 - **🔗 백엔드 스펙 통합**: `@/docs/guides/backend-spec-integration.md` (SpringDoc / restDocs / 둘 다)
 - **🚀 Vercel 배포**: `@/docs/guides/deploy-vercel.md` (Vercel + GitHub Actions 분담)
 - **🧪 테스트 가이드**: `@/docs/guides/testing.md` (Vitest + RTL + Playwright)
+- **🌐 i18n 도입 가이드**: `@/docs/guides/i18n.md` (필요 시 도입 절차 — baseline 코드 기본 미포함)
 
 ### 일반 가이드
 
