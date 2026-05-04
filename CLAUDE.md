@@ -36,6 +36,7 @@
 - **🧪 MSW 모킹**: `@/docs/guides/mocking-msw.md`
 - **🔗 백엔드 스펙 통합**: `@/docs/guides/backend-spec-integration.md` (SpringDoc / restDocs / 둘 다)
 - **🚀 Vercel 배포**: `@/docs/guides/deploy-vercel.md` (Vercel + GitHub Actions 분담)
+- **🧪 테스트 가이드**: `@/docs/guides/testing.md` (Vitest + RTL + Playwright)
 
 ### 일반 가이드
 
@@ -55,6 +56,11 @@ npm run check-all     # typecheck + lint + format:check (작업 완료 시 권�
 
 # API 코드 생성
 npm run gen:api       # openapi/<spec>.yaml → typed 함수 + 스키마 + MSW 핸들러
+
+# 테스트
+npm run test          # Vitest 단위/컴포넌트 (CI 모드)
+npm run test:watch    # Vitest watch
+npm run test:e2e      # Playwright E2E (헤드리스)
 
 # UI 컴포넌트
 npx shadcn@latest add button   # 새 shadcn 컴포넌트 추가

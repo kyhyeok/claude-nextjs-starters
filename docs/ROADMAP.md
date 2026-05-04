@@ -4,7 +4,7 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **📅 최종 업데이트**: 2026-05-04
-**📊 진행 상황**: Phase 1~4 + 4.5/4.6/4.7 + 5-E 완료 ✅ / Phase 5-A(테스트) 보류, 5-B/C/D/F 옵션
+**📊 진행 상황**: Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-E 완료 ✅ / Phase 5-B/C/D/F 옵션
 
 ---
 
@@ -88,6 +88,22 @@
 - ✅ `app/api/auth/signup/route.ts` 신규
 - ✅ `lib/auth/form-schemas.ts` 신규
 
+### Phase 5-A: 테스트 베이스라인 ✅
+
+- ✅ Vitest 4 + @vitejs/plugin-react + jsdom 설치 + `vitest.config.ts`
+- ✅ `@testing-library/react` + `jest-dom` + `user-event` 설치
+- ✅ `src/test/setup.ts` — jest-dom matchers + MSW node lifecycle + jsdom 폴리필 (ResizeObserver/IntersectionObserver/matchMedia/scrollIntoView)
+- ✅ `src/mocks/server.ts` — MSW node server (browser와 핸들러 공유)
+- ✅ 단위 테스트 예시: `src/lib/forms/api-error-to-form.test.ts` (5 케이스)
+- ✅ 컴포넌트 테스트 예시: `src/components/login-form.test.tsx` (3 케이스, RTL + user-event)
+- ✅ Playwright 1.59 설치 + `playwright.config.ts` (webServer 자동, MSW 활성화)
+- ✅ E2E 예시: `tests/e2e/users-page.spec.ts`, `auth-protection.spec.ts` (4 케이스)
+- ✅ npm scripts: `test`, `test:watch`, `test:e2e`, `test:e2e:ui`
+- ✅ `.github/workflows/ci.yml`에 test/e2e job 활성화 + Playwright 브라우저 캐싱 + report 아티팩트
+- ✅ `docs/guides/testing.md` 신규 작성 (3계층 전략 + 작성 패턴 + 함정 6종)
+- ✅ `.gitignore`에 test-results/, playwright-report/ 등 추가
+- ✅ 검증: `npm run test` (8/8) + `npm run test:e2e` (4/4) 통과
+
 ### Phase 5-E: GitHub Actions CI + Vercel 배포 가이드 ✅
 
 - ✅ `.github/workflows/ci.yml` 작성 (check + build, concurrency cancel-in-progress)
@@ -103,14 +119,7 @@
 > 아래 항목들은 **모든 프로젝트에 필요하지는 않으므로** 필요 시점에 baseline에 통합합니다.
 > 도입 결정 시 이 로드맵의 *완료 Phase*로 이동하고 가이드를 작성합니다.
 
-### Phase 5-A: 테스트 베이스라인 (추천도 ⭐⭐⭐)
-
-- [ ] **Vitest** + `@testing-library/react` + `@testing-library/jest-dom`
-- [ ] `src/test/setup.ts` — RTL + MSW node server 통합
-- [ ] `src/features/users/__tests__/queries.test.tsx` 예시
-- [ ] **Playwright** E2E + 보호 라우트 시나리오
-- [ ] `npm run test`, `npm run test:e2e` 스크립트
-- [ ] CI 가이드 (GitHub Actions 예시)
+### ~~Phase 5-A: 테스트 베이스라인~~ → _완료 Phase로 이동됨_ (위 Phase 5-A 참조)
 
 ### Phase 5-B: i18n (추천도 ⭐⭐)
 
