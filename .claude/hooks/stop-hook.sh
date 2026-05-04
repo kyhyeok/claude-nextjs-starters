@@ -4,18 +4,16 @@
 # 이 스크립트는 Claude Code가 Stop 이벤트를 발생시킬 때 실행됩니다.
 # Claude가 응답을 완료했을 때 Slack 알림을 보냅니다.
 
-# .env 파일에서 Slack 웹훅 URL 로드
+# .env 파일에서 Slack 웹훅 URL 로드 (없으면 알림 비활성화로 간주하고 조용히 종료)
 if [ -f "$CLAUDE_PROJECT_DIR/.env" ]; then
     source "$CLAUDE_PROJECT_DIR/.env"
 else
-    echo "오류: .env 파일을 찾을 수 없습니다: $CLAUDE_PROJECT_DIR/.env" >&2
-    exit 1
+    exit 0
 fi
 
-# Slack 웹훅 URL 확인
+# Slack 웹훅 URL이 없으면 알림 비활성화로 간주하고 조용히 종료
 if [ -z "$SLACK_WEBHOOK_URL" ]; then
-    echo "오류: SLACK_WEBHOOK_URL이 설정되지 않았습니다." >&2
-    exit 1
+    exit 0
 fi
 
 # 프로젝트명 추출
