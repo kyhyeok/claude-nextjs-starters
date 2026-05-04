@@ -35,6 +35,7 @@
 - **🔐 인증 패턴**: `@/docs/guides/auth-pattern.md`
 - **🧪 MSW 모킹**: `@/docs/guides/mocking-msw.md`
 - **🔗 백엔드 스펙 통합**: `@/docs/guides/backend-spec-integration.md` (SpringDoc / restDocs / 둘 다)
+- **🚀 Vercel 배포**: `@/docs/guides/deploy-vercel.md` (Vercel + GitHub Actions 분담)
 
 ### 일반 가이드
 

@@ -4,7 +4,7 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **📅 최종 업데이트**: 2026-05-04
-**📊 진행 상황**: Phase 1~4 완료 ✅ / Phase 5(옵션) 후보 정의
+**📊 진행 상황**: Phase 1~4 + 4.5/4.6/4.7 + 5-E 완료 ✅ / Phase 5-A(테스트) 보류, 5-B/C/D/F 옵션
 
 ---
 
@@ -78,6 +78,24 @@
 - ✅ 흔한 함정 (3.0 vs 3.1, snake/camel, 누락 엔드포인트)
 - ✅ CLAUDE.md / PRD.md / api-pattern.md에 가이드 링크 추가
 
+### Phase 4.7: 검증 + env 분리 + 폼 패턴 일관화 ✅
+
+- ✅ Playwright로 dev 서버 E2E 검증 (mock → /api/proxy 가로챔 → 페이지 렌더)
+- ✅ 검증 중 발견한 ZodError 수정: `lib/env.ts` → `env/server.ts` + `env/client.ts` 분리
+- ✅ `createServerApiClient`을 `lib/api/server-client.ts`로 분리 (server-only)
+- ✅ login-form/signup-form을 RHF + Zod + useLogin/useSignup + applyApiErrorToForm 패턴으로 재작성
+- ✅ `lib/forms/api-error-to-form.ts` 헬퍼 도입
+- ✅ `app/api/auth/signup/route.ts` 신규
+- ✅ `lib/auth/form-schemas.ts` 신규
+
+### Phase 5-E: GitHub Actions CI + Vercel 배포 가이드 ✅
+
+- ✅ `.github/workflows/ci.yml` 작성 (check + build, concurrency cancel-in-progress)
+- ✅ Phase 5-A 도입 시 활성화할 test job을 주석으로 미리 골격 포함
+- ✅ `docs/guides/deploy-vercel.md` 신규 작성 (책임 분담/환경변수/Runtime/함정)
+- ✅ Branch Protection 셋업 가이드 포함
+- ✅ CLAUDE.md / PRD.md에 가이드 링크 추가
+
 ---
 
 ## 🛣 향후 개선 옵션 (Phase 5 후보)
@@ -115,12 +133,7 @@
 - [ ] shadcn 컴포넌트 스토리 자동 등록 패턴
 - [ ] MSW Storybook addon 통합 (이미 갖춘 mocks 재사용)
 
-### Phase 5-E: CI/CD 베이스라인 (추천도 ⭐⭐)
-
-- [ ] GitHub Actions: `check-all` + `build` PR 검증
-- [ ] Vercel/Cloudflare Pages 배포 가이드
-- [ ] 환경별 시크릿 관리 (dev/preview/prod)
-- [ ] Husky pre-push에 `check-all` 추가 옵션
+### ~~Phase 5-E: CI/CD 베이스라인~~ → _완료 Phase로 이동됨_ (위 Phase 5-E 참조)
 
 ### Phase 5-F: 클라이언트 전역 상태 (추천도 ⭐)
 
