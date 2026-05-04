@@ -69,6 +69,15 @@
 - ✅ `CLAUDE.md` 가이드 링크/명령어/환경변수 업데이트
 - ✅ `update-roadmap` 명령어 일반화
 
+### Phase 4.6: 백엔드 스펙 통합 가이드 ✅
+
+- ✅ `docs/guides/backend-spec-integration.md` 신규 작성
+- ✅ SpringDoc(OpenAPI) / Spring restDocs / 둘 다 사용 시나리오 3종 정리
+- ✅ `restdocs-api-spec` 변환 플러그인 적용 절차
+- ✅ orval `input.target` 옵션별 사용법 (URL / 파일 / multi-config)
+- ✅ 흔한 함정 (3.0 vs 3.1, snake/camel, 누락 엔드포인트)
+- ✅ CLAUDE.md / PRD.md / api-pattern.md에 가이드 링크 추가
+
 ---
 
 ## 🛣 향후 개선 옵션 (Phase 5 후보)

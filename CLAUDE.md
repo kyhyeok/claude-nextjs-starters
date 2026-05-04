@@ -34,6 +34,7 @@
 - **🔌 API 통신 패턴**: `@/docs/guides/api-pattern.md`
 - **🔐 인증 패턴**: `@/docs/guides/auth-pattern.md`
 - **🧪 MSW 모킹**: `@/docs/guides/mocking-msw.md`
+- **🔗 백엔드 스펙 통합**: `@/docs/guides/backend-spec-integration.md` (SpringDoc / restDocs / 둘 다)
 
 ### 일반 가이드
 

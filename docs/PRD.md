@@ -173,6 +173,7 @@ DX           ESLint 9, Prettier, Husky, lint-staged, server-only
 - 🔌 **API 통신 패턴**: [`./guides/api-pattern.md`](./guides/api-pattern.md)
 - 🔐 **인증 패턴**: [`./guides/auth-pattern.md`](./guides/auth-pattern.md)
 - 🧪 **MSW 모킹**: [`./guides/mocking-msw.md`](./guides/mocking-msw.md)
+- 🔗 **백엔드 스펙 통합**: [`./guides/backend-spec-integration.md`](./guides/backend-spec-integration.md)
 - 🎨 **스타일링**: [`./guides/styling-guide.md`](./guides/styling-guide.md)
 - 🧩 **컴포넌트 패턴**: [`./guides/component-patterns.md`](./guides/component-patterns.md)
 - ⚡ **Next.js 16**: [`./guides/nextjs-16.md`](./guides/nextjs-16.md)
