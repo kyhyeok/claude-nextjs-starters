@@ -117,19 +117,39 @@ docs/PRD.md를 기반으로 프로젝트 문서를 자동 생성/업데이트합
 
 ### 항상 보존해야 할 파일들:
 
-- 핵심 Next.js 설정 파일들
-- TypeScript 설정
-- TailwindCSS 설정
-- ESLint 및 Prettier 설정
-- ShadcnUI 컴포넌트
-- 필수 레이아웃 컴포넌트
-- 인증 설정 (적절히 구현된 경우)
-- 데이터베이스 설정 (필요한 경우)
-- 환경 변수 템플릿
-- docs/PRD.md (프로젝트 요구사항 문서)
-- docs/ROADMAP.md (개발 로드맵)
-- 업데이트된 README.md
-- 업데이트된 CLAUDE.md
+#### 일반 인프라 / 설정
+
+- 핵심 Next.js 설정 파일들 (`next.config.ts`, `tsconfig.json`)
+- TypeScript / TailwindCSS / ESLint / Prettier 설정
+- ShadcnUI 컴포넌트 (`src/components/ui/*`)
+- 필수 레이아웃 컴포넌트 (`src/components/layout/*`, `providers/*`)
+- 환경 변수 템플릿 (`.env.example`)
+- 모든 docs/, .claude/, .github/
+
+#### 🔒 이 baseline의 *의도적 예시*는 데모가 아닌 *학습 자료/표준 패턴 템플릿*입니다 — 절대 제거하지 마세요
+
+- `src/features/users/` — **도메인 표준 패턴 템플릿** (새 도메인 추가 시 복사용)
+- `src/lib/api/{client,server-client,errors,orval-mutator,request-id}.ts` — HTTP 통신 핵심
+- `src/lib/api/generated/` — orval 산출물 (예시 도메인이지만 *재생성 가능*하므로 유지)
+- `src/lib/auth/*` — 인증 인프라 (`config`, `cookies`, `session`, `use-auth`, `form-schemas`)
+- `src/lib/env/{server,client}.ts` — server/client 분리된 환경변수
+- `src/lib/forms/api-error-to-form.ts` — 폼 에러 매핑 헬퍼
+- `src/lib/query/get-query-client.ts` — TanStack Query 인스턴스
+- `src/mocks/{handlers,browser,server,init}.ts` — MSW
+- `src/test/setup.ts` — Vitest + RTL 셋업
+- `src/proxy.ts` — Next.js 16 보호 라우트
+- `src/app/api/auth/{login,logout,refresh,signup}/route.ts` — 인증 Route Handler
+- `src/app/api/proxy/[...path]/route.ts` — 백엔드 프록시 (핵심 인프라, _데모 아님_)
+- `src/app/api/health/route.ts` — 헬스체크
+- `src/app/users/page.tsx` — _통합 흐름 데모 페이지_ (Phase 1~4 학습 자료, 새 프로젝트 첫 도메인 작업 시 *교체 대상*이지 *제거 대상*이 아님)
+- `src/components/{login-form,signup-form}.tsx` — RHF + Zod + mutation 훅 패턴 _살아있는 예시_
+- `openapi/example.yaml` — codegen 입력 _예시_ (실제 백엔드 스펙으로 *교체*하세요, 제거하지 말고)
+- `tests/e2e/*.spec.ts`, `src/**/*.test.{ts,tsx}` — 테스트 패턴 예시
+- `playwright.config.ts`, `vitest.config.ts`, `orval.config.ts`, `.github/workflows/ci.yml`
+- `public/mockServiceWorker.js`
+
+> ⚠️ **위 항목들을 "데모 페이지"로 오해하고 제거하면 baseline의 *학습 자료*와 *표준 패턴 템플릿*이 사라집니다.**
+> 새 프로젝트의 *첫 도메인*으로 *교체*는 가능하지만 (예: `features/users` → `features/products`), *통째로 제거*는 baseline 의도와 충돌합니다.
 
 ### 코드 정리 표준:
 

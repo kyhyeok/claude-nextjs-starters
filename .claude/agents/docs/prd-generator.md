@@ -251,14 +251,35 @@ model: sonnet
 - **React Hook Form 7.x** - 폼 상태 관리
 - **Zod** - 스키마 검증 라이브러리
 
-### 🗄️ 백엔드 & 데이터베이스
+### 🌐 데이터 통신 & 상태 (이 baseline의 기본 스택)
 
-- **Supabase** - BaaS (인증, 데이터베이스, 실시간 구독)
-- **PostgreSQL** - 관계형 데이터베이스 (Supabase 포함)
+- **TanStack Query 5** - 서버 상태 캐싱/동기화/낙관적 업데이트
+- **ky 1** - HTTP 클라이언트 (인터셉터 기반 토큰/에러 정규화)
+- **orval 7** - OpenAPI 스펙 → typed 함수 + MSW 핸들러 자동 생성
+- **MSW 2** - 백엔드 미완성 시 mock 응답 (dev only, dynamic import)
+
+### 🔐 인증 & 보안
+
+- **httpOnly 쿠키 + Route Handler 프록시** - 토큰을 JS 접근 불가 영역에 저장, 백엔드 URL 클라이언트 노출 방지
+- 401 자동 리프레시 인터셉터 (단일 in-flight 보장)
+
+### 🧪 테스트
+
+- **Vitest + Testing Library** - 단위/컴포넌트 테스트
+- **Playwright** - E2E (desktop + mobile-ios + mobile-android)
+- **MSW node** - 테스트 환경 mock
+
+### 🗄️ 백엔드 (외부 프로젝트로 분리 권장)
+
+이 baseline은 **외부 백엔드(Java/Kotlin/Nest 등)와 통신하는 프론트엔드**를 가정합니다. 백엔드는 *별도 레포*로 운영하며 OpenAPI 스펙으로 계약을 노출합니다.
+
+- 옵션 A (권장): **외부 백엔드 + REST API + JWT** — Spring/NestJS 등 자체 백엔드. SpringDoc/restDocs로 OpenAPI 스펙 노출
+- 옵션 B (대안 BaaS): **Supabase** - 빠른 프로토타이핑이 필요하고 풀스택 통합이 우선이라면. 단, 이 baseline의 `/api/proxy/*` 패턴과는 다른 흐름
 
 ### 🚀 배포 & 호스팅
 
-- **Vercel** - Next.js 16 최적화 배포 플랫폼
+- **Vercel** - Next.js 16 최적화 배포 플랫폼 (Preview/Production 자동 배포)
+- **GitHub Actions** - CI 게이트 (typecheck + lint + format + test + e2e)
 
 ### 📦 패키지 관리
 
@@ -280,7 +301,7 @@ model: sonnet
 - **Next.js 16 기반**: 최신 App Router, 향상된 성능, React 19 지원
 - **TailwindCSS v4**: 설정 파일 없는 새로운 CSS 엔진 활용
 - **TypeScript**: 최신 타입 시스템으로 코드 안정성
-- **Supabase**: 백엔드 인프라 최소화, 실시간 기능
+- **외부 백엔드 + OpenAPI 스펙**: 도메인 무관 통신 패턴 (이 baseline의 기본)
 - **학습 곡선이 낮고 문서화가 잘 된 최신 기술** 우선
 - **커뮤니티가 활발하고 장기 지원되는 기술** 우선
 
