@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { env } from '@/lib/env'
+import { serverEnv } from '@/lib/env/server'
 import { BACKEND_AUTH_PATHS } from '@/lib/auth/config'
 import {
   clearAuthCookies,
@@ -19,14 +19,17 @@ export async function POST() {
 
   if (accessToken || refreshToken) {
     try {
-      await fetch(`${env.BACKEND_API_BASE_URL}/${BACKEND_AUTH_PATHS.logout}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-        },
-        body: JSON.stringify({ refreshToken }),
-      })
+      await fetch(
+        `${serverEnv.BACKEND_API_BASE_URL}/${BACKEND_AUTH_PATHS.logout}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+          },
+          body: JSON.stringify({ refreshToken }),
+        }
+      )
     } catch {
       // 백엔드 로그아웃 실패는 무시 — 클라이언트 쿠키 정리가 우선
     }

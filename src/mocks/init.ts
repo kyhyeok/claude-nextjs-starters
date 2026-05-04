@@ -1,3 +1,5 @@
+import { clientEnv } from '@/lib/env/client'
+
 /**
  * MSW 시작 진입점. 다음 모든 조건을 만족할 때만 worker가 시작됩니다:
  *
@@ -14,7 +16,7 @@ export async function startMSW(): Promise<void> {
   if (started) return
   if (typeof window === 'undefined') return
   if (process.env.NODE_ENV !== 'development') return
-  if (process.env.NEXT_PUBLIC_API_MOCK_ENABLED !== 'true') return
+  if (!clientEnv.NEXT_PUBLIC_API_MOCK_ENABLED) return
 
   const { worker } = await import('./browser')
   await worker.start({
@@ -29,6 +31,6 @@ export async function startMSW(): Promise<void> {
 export function isMockEnabled(): boolean {
   return (
     process.env.NODE_ENV === 'development' &&
-    process.env.NEXT_PUBLIC_API_MOCK_ENABLED === 'true'
+    clientEnv.NEXT_PUBLIC_API_MOCK_ENABLED
   )
 }

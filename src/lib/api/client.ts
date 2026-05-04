@@ -1,5 +1,4 @@
 import ky, { type KyInstance, type Options } from 'ky'
-import { env } from '@/lib/env'
 import { ApiError } from './errors'
 
 /**
@@ -156,22 +155,18 @@ export const apiClient: KyInstance = createApiClient({
 })
 
 /**
- * 서버 컴포넌트/Route Handler 전용 인스턴스 팩토리.
- * BACKEND_API_BASE_URL을 직접 호출하며, cookies() API로 읽은 토큰을 주입합니다.
- *
- * 사용 예:
- *   import { cookies } from 'next/headers'
- *   import { AUTH_COOKIES } from '@/lib/auth/config'
- *
- *   const token = (await cookies()).get(AUTH_COOKIES.accessToken)?.value
- *   const client = createServerApiClient(() => token ?? null)
- *   const me = await client.get('users/me').json<User>()
+ * 내부 헬퍼 — server-client.ts에서 호출됩니다.
+ * 직접 사용하지 마세요. 서버에서는 `createServerApiClient`(server-only)를,
+ * 클라이언트에서는 위의 `apiClient`를 사용하세요.
  */
-export function createServerApiClient(
+export function _createKyClientForServer(params: {
+  baseUrl: string
   tokenProvider: TokenProvider
-): KyInstance {
+}): KyInstance {
   return createApiClient({
-    baseUrl: env.BACKEND_API_BASE_URL,
-    tokenProvider,
+    baseUrl: params.baseUrl,
+    tokenProvider: params.tokenProvider,
   })
 }
+
+export type { TokenProvider }

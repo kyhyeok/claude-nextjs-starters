@@ -113,9 +113,12 @@ src/features/<도메인>/
 ```
 src/lib/
 ├── utils.ts                            # 공통 헬퍼 (cn 등)
-├── env.ts                              # Zod 검증된 환경변수
+├── env/                                # 🔧 환경변수 (server/client 분리)
+│   ├── server.ts                       #   server-only · BACKEND_API_BASE_URL 등 비공개
+│   └── client.ts                       #   server/client 양용 · NEXT_PUBLIC_* 만
 ├── api/                                # 🌐 HTTP 통신 레이어
-│   ├── client.ts                       #   ky 인스턴스 + 401 자동 리프레시
+│   ├── client.ts                       #   ky 인스턴스 (브라우저용 apiClient) + 인터셉터
+│   ├── server-client.ts                #   server-only · createServerApiClient
 │   ├── errors.ts                       #   ApiError + isApiError
 │   ├── orval-mutator.ts                #   orval ↔ ky 브릿지
 │   └── generated/                      #   npm run gen:api 산출물 (lint/format 제외)
@@ -129,6 +132,11 @@ src/lib/
 └── query/                              # 🔄 TanStack Query 인프라
     └── get-query-client.ts             #   서버=요청별 / 브라우저=싱글톤
 ```
+
+**환경변수 분리 원칙**:
+
+- `env/server.ts` — `'server-only'` import, 클라이언트에서 import 시 빌드 실패. `BACKEND_API_BASE_URL` 같은 비공개 값
+- `env/client.ts` — `NEXT_PUBLIC_*` 만 포함. server/client 양쪽에서 import 가능
 
 **확장 가이드**:
 

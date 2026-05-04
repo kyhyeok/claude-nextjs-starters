@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { env } from '@/lib/env'
+import { serverEnv } from '@/lib/env/server'
 import { readAccessToken } from '@/lib/auth/cookies'
 
 /**
@@ -36,7 +36,7 @@ async function handle(
   const { path } = await ctx.params
   const targetPath = path.join('/')
   const search = request.nextUrl.search
-  const targetUrl = `${env.BACKEND_API_BASE_URL}/${targetPath}${search}`
+  const targetUrl = `${serverEnv.BACKEND_API_BASE_URL}/${targetPath}${search}`
 
   const headers = new Headers()
   request.headers.forEach((value, key) => {

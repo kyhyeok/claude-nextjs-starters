@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { cookies } from 'next/headers'
-import { env } from '@/lib/env'
+import { serverEnv } from '@/lib/env/server'
 import { AUTH_COOKIES, AUTH_COOKIE_MAX_AGE } from './config'
 
 /**
@@ -21,7 +21,7 @@ interface SetTokensInput {
   refreshTokenMaxAge?: number
 }
 
-const isProd = env.NODE_ENV === 'production'
+const isProd = serverEnv.NODE_ENV === 'production'
 
 export async function setAuthCookies(input: SetTokensInput): Promise<void> {
   const store = await cookies()

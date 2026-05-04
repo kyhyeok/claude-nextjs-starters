@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { env } from '@/lib/env'
+import { serverEnv } from '@/lib/env/server'
 import { BACKEND_AUTH_PATHS } from '@/lib/auth/config'
 import {
   clearAuthCookies,
@@ -26,7 +26,7 @@ export async function POST() {
   let upstream: Response
   try {
     upstream = await fetch(
-      `${env.BACKEND_API_BASE_URL}/${BACKEND_AUTH_PATHS.refresh}`,
+      `${serverEnv.BACKEND_API_BASE_URL}/${BACKEND_AUTH_PATHS.refresh}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

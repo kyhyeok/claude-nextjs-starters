@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { env } from '@/lib/env'
+import { serverEnv } from '@/lib/env/server'
 import { BACKEND_AUTH_PATHS } from '@/lib/auth/config'
 import { setAuthCookies } from '@/lib/auth/cookies'
 
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   }
 
   const upstream = await fetch(
-    `${env.BACKEND_API_BASE_URL}/${BACKEND_AUTH_PATHS.login}`,
+    `${serverEnv.BACKEND_API_BASE_URL}/${BACKEND_AUTH_PATHS.login}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

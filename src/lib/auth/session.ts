@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { readAccessToken } from './cookies'
-import { createServerApiClient } from '@/lib/api/client'
+import { createServerApiClient } from '@/lib/api/server-client'
 import { BACKEND_AUTH_PATHS } from './config'
 import { isApiError } from '@/lib/api/errors'
 
