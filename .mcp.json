@@ -17,6 +17,17 @@
     "shadcn": {
       "command": "npx",
       "args": ["shadcn@latest", "mcp"]
+    },
+    "shrimp-task-manager": {
+      "command": "node",
+      "args": [
+        "/Users/kimyoonhyeok/workplace/mcp-shrimp-task-manager/dist/index.js"
+      ],
+      "env": {
+        "DATA_DIR": "/Users/kimyoonhyeok/workplace/claude-nextjs-starters/shrimp_data",
+        "TEMPLATES_USE": "ko",
+        "ENABLE_GUI": "false"
+      }
     }
   }
 }
