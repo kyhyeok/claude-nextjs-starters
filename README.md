@@ -11,19 +11,19 @@
 
 ## 🛠 기술 스택
 
-| 영역        | 도구                                                |
-| ----------- | --------------------------------------------------- |
-| 프레임워크  | Next.js 16.2.4 (App Router + Turbopack)             |
-| 런타임      | React 19.2.5 + TypeScript 5                         |
-| 스타일링    | TailwindCSS v4 + shadcn/ui (new-york) + next-themes |
-| 폼          | React Hook Form 7 + Zod 4                           |
-| HTTP        | ky 1                                                |
-| 데이터/상태 | TanStack Query 5                                    |
-| 코드 생성   | orval 7 (OpenAPI → typed 함수 + MSW 핸들러)         |
-| 모킹        | MSW 2 (dev-only, dynamic import)                    |
-| 인증        | httpOnly 쿠키 + Route Handler 프록시 (자체 구현)    |
-| 테스트      | Vitest + RTL + Playwright                           |
-| CI/배포     | GitHub Actions + Vercel                             |
+| 영역        | 도구                                                          |
+| ----------- | ------------------------------------------------------------- |
+| 프레임워크  | Next.js 16.2.4 (App Router + Turbopack)                       |
+| 런타임      | React 19.2.5 + TypeScript 5                                   |
+| 스타일링    | TailwindCSS v4 + shadcn/ui (new-york) + next-themes           |
+| 폼          | React Hook Form 7 + Zod 4                                     |
+| HTTP        | ky 1                                                          |
+| 데이터/상태 | TanStack Query 5                                              |
+| 코드 생성   | orval 7 (OpenAPI → typed 함수 + MSW 핸들러)                   |
+| 모킹        | MSW 2 (dev-only, dynamic import)                              |
+| 인증        | httpOnly 쿠키 + Route Handler 프록시 (자체 구현)              |
+| 테스트      | Vitest + RTL (E2E는 옵션 — `docs/optional/e2e-playwright.md`) |
+| CI/배포     | GitHub Actions + Vercel                                       |
 
 ## 🚀 빠른 시작
 
@@ -40,7 +40,6 @@ cp .env.example .env.local
 
 # 3) 의존성 설치
 npm install
-npx playwright install chromium    # E2E 테스트용 (한 번만)
 
 # 4) (옵션) 백엔드 OpenAPI 스펙으로 typed 코드 생성
 npm run gen:api
@@ -60,7 +59,7 @@ npm run check-all        # typecheck + lint + format:check (작업 완료 시)
 
 npm run gen:api          # OpenAPI 스펙 → typed 함수 + MSW 핸들러
 npm run test             # Vitest 단위/컴포넌트
-npm run test:e2e         # Playwright E2E
+# E2E (Playwright)는 옵션 — 도입은 docs/optional/e2e-playwright.md 참조
 ```
 
 ## 📚 문서
