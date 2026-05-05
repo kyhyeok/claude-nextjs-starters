@@ -3,6 +3,8 @@
 > **외부 백엔드(Java/Kotlin/Nest 등)와 통신하는 모든 프론트엔드 프로젝트의 보편 baseline.**
 > Next.js 16 + React 19 + TypeScript 5 + TailwindCSS v4 + shadcn/ui.
 
+> 🚀 **이 starter로 새 프로젝트를 시작했다면**: `README.md` / `docs/PRD.md` / `docs/ROADMAP.md` 세 파일은 *baseline 정체성용*입니다 — 새 프로젝트의 정체성에 맞게 **새로 작성하거나 삭제**하세요. `CLAUDE.md`는 첫 정체성 문단만 교체하면 나머지(행동 가이드라인 / 가이드 인덱스 / 금지사항)는 그대로 유효합니다.
+
 ## 🎯 정체성
 
 이 starter는 _도메인 무관_ 기반입니다. 인증/HTTP/모킹/테스트/CI/보안 헤더가 처음부터 박혀 있어, 새 프로젝트마다 같은 셋업을 다시 짜지 않아도 됩니다.
