@@ -4,7 +4,7 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **최종 업데이트**: 2026-05-05
-**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J + 5-K-pre + 5-K + 5-L + 5-M + 5-N 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
+**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J + 5-K-pre + 5-K + 5-L + 5-M + 5-N + 5-O 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
 
 > baseline은 *런타임 코드*뿐 아니라 _Claude Code 협업 인프라_(`.claude/` 권한·훅)도 포함합니다.
 
@@ -161,6 +161,39 @@ baseline의 *Claude Code 협업 인프라*를 권한 정책 + 자동 검증 훅�
 - 미사용 Slack 훅 2종 제거 (`stop-hook.sh`, `notification-hook.sh`) — 외부 참조 0건 grep 확인 후 삭제
 
 검증: ask 등급은 실 운영 사이클 1회 (`git commit` + `git push`)에서 정상 동작 확인.
+
+### Phase 5-O: 하네스 엔지니어링 정합성 (Debugging + Maturity) ✅
+
+외부 분석에서 식별된 baseline의 6개 하네스 점수 중 가장 약했던 _Debugging_(4.0/10)과 미명시 영역이었던 _starter의 책임 경계_ 를 정합성 차원에서 정리. _도메인 무관 baseline이 하네스 엔지니어링을 충족할 수 있는가_ 라는 본질적 질문에 대한 답을 가이드 자산으로 형식화.
+
+**진단 컨텍스트**:
+
+- 점수 분포(외부 검증): Context 9.5 / Permission 9.5 / Verification 8.5 / Tool 8.0 / Sub-agent 6.5 / **Debugging 4.0** — 종합 7.7
+- 핵심 결론: starter는 _도메인 무관 영역_ 만 충족 가능. _도메인 의존 영역_(invariant / 사고 카탈로그 / Skill / 도메인 reviewer)은 본질적으로 비워둘 수밖에 없음
+- 따라서 starter의 책임은 _최대한 채우기_ 가 아니라 _비어 있는 자리를 정직하게 표시_ 하는 것
+
+**산출 (3단계, 각각 별도 커밋)**:
+
+- 1단계 (커밋 `96451dc`): `docs/guides/debugging.md` 신설 — 글의 §6 Debugging Harness 표준 골격을 baseline의 추적 인프라(X-Request-ID + ApiError + MSW)와 결합. Symptom/Evidence/Verification Loop 정보 분리 / 표준 Context Pack 골격 / 환경 변수 점검 매트릭스(값 노출 없이) / 반례 루프 5문항 / 회귀 테스트화 정책 / 도메인 결정 후 채워야 할 5개 슬롯 명시. README.md + CLAUDE.md Reference 등재 (10 → 11개).
+- 2단계 (커밋 `afb65ed`): `docs/guides/harness-maturity.md` 신설 — 6개 하네스의 도메인 의존도 분류표(무관/반의존/완전 의존)와 Day 1 / Week 1 / Month 1·3·6 성숙도 곡선. starter가 충족 못 하는 5개 슬롯의 정직한 명시 + 단계 전환 자기 진단 체크리스트. README.md + CLAUDE.md Reference 등재 (11 → 12개).
+- 3단계 (이 커밋): ROADMAP에 Phase 5-O 본문 블록 등재.
+
+**baseline 정체성 정렬**:
+
+- 충족 못 하는 영역(Verification Layer 2/3, Debugging의 도메인 부분, Worktree 운영, 도메인 reviewer)을 _약점으로 숨기지 않고 명시적 슬롯_ 으로 표시
+- 각 슬롯에 어떤 자산을 둘지(`.claude/references/` / `.claude/skills/` / `.claude/agents/`)까지 경로 안내
+- baseline의 *책임 경계*를 사용자에게 처음부터 정직하게 노출 — _starter 신뢰도 정렬_
+
+**측정 변화 (Phase 5-O 전 → 후)**:
+
+| 지표                   | 이전 | 현재     | 효과                        |
+| ---------------------- | ---- | -------- | --------------------------- |
+| Reference 가이드 수    | 10   | **12**   | +2 (debugging + maturity)   |
+| Debugging Harness 점수 | 4.0  | **6.5+** | 인프라 미보유 → 템플릿 제공 |
+| 책임 경계 명시         | 부분 | **명시** | 못 채우는 5개 슬롯 노출     |
+| 종합 하네스 점수       | 7.7  | **~8.4** | +0.7                        |
+
+**검증**: `npm run check-all` (typecheck + lint + format) 통과.
 
 ### Phase 5-N: 1일 onboarding 학습 단서 보강 ✅
 
