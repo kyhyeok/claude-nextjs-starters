@@ -230,6 +230,121 @@ function ProductFeed() {
 
 ---
 
+## 🪟 상태 표시 프리미티브 (Empty / Error / Skeleton)
+
+리스트 화면의 _비어있음 / 실패 / 로딩_ 세 상태를 표시하는 baseline 컴포넌트입니다.
+
+> **Layer 4 (무명사 프리미티브) — Slot 패턴 강제**. baseline은 _기본 일러스트 / 문구를 박지 않습니다_. 모든 콘텐츠는 props로 받고, 색은 CSS 변수만, 레이아웃은 `flex-col + items-center + gap-3 + py-12 + text-center`까지만 (PRD `🎨 baseline 경계 정책` 참조).
+
+### `<EmptyState />` — 빈 상태
+
+검색 결과 0건, 첫 진입 시 항목 없음 등에 사용. `role="status"`로 스크린리더가 *상태*로 안내.
+
+```tsx
+'use client'
+
+import { EmptyState } from '@/components/ui/empty-state'
+import { Button } from '@/components/ui/button'
+import { Inbox } from 'lucide-react'
+;<EmptyState
+  icon={<Inbox className="text-muted-foreground size-12" />}
+  title="결과가 없어요"
+  description="다른 검색어로 시도해보세요."
+  action={
+    <Button variant="outline" onClick={resetFilters}>
+      필터 초기화
+    </Button>
+  }
+/>
+```
+
+> **icon은 props** — baseline은 어떤 아이콘도 기본값으로 박지 않습니다. 도메인이 lucide / 자체 SVG / 일러스트 이미지 등 자유 선택.
+
+### `<ErrorState />` — 에러 상태
+
+쿼리 실패, 권한 오류 등에 사용. `role="alert"`로 스크린리더가 *경고*로 안내.
+
+```tsx
+import { ErrorState } from '@/components/ui/error-state'
+import { Button } from '@/components/ui/button'
+import { AlertCircle } from 'lucide-react'
+;<ErrorState
+  icon={<AlertCircle className="text-destructive size-12" />}
+  title="불러오지 못했어요"
+  description={error.message}
+  action={<Button onClick={() => refetch()}>다시 시도</Button>}
+/>
+```
+
+### `<Skeleton />` — 로딩 상태 (shadcn 동봉)
+
+shadcn `<Skeleton/>`을 _그대로_ 사용합니다 (별도 baseline 컴포넌트 없음). 도메인이 _카드 레이아웃에 맞춰_ 자유롭게 조합:
+
+```tsx
+import { Skeleton } from '@/components/ui/skeleton'
+
+function ProductFeedSkeleton() {
+  return (
+    <div className="space-y-4">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="flex gap-4">
+          <Skeleton className="size-20 rounded-md" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+> **카드 스켈레톤은 _도메인_** — baseline은 `<Skeleton/>` 프리미티브만 제공. `<ProductFeedSkeleton/>`, `<JobCardSkeleton/>` 같은 도메인 명사 합성은 도메인이 작성합니다.
+
+### 세 상태 통합 패턴 (TanStack Query 결합)
+
+```tsx
+'use client'
+
+function ProductList() {
+  const { data, isLoading, error, refetch } = useProductsQuery(/* ... */)
+
+  if (isLoading) return <ProductFeedSkeleton />
+
+  if (error) {
+    return (
+      <ErrorState
+        icon={<AlertCircle className="text-destructive size-12" />}
+        title="불러오지 못했어요"
+        description={error.message}
+        action={<Button onClick={() => refetch()}>다시 시도</Button>}
+      />
+    )
+  }
+
+  if (!data?.items.length) {
+    return (
+      <EmptyState
+        icon={<Inbox className="text-muted-foreground size-12" />}
+        title="결과가 없어요"
+        description="다른 검색어로 시도해보세요."
+      />
+    )
+  }
+
+  return data.items.map(item => <YourDomainCard key={item.id} item={item} />)
+}
+```
+
+### 상태 프리미티브 함정
+
+- **icon에 색을 박지 마세요**: baseline 컴포넌트는 icon에 색을 입히지 않습니다. 도메인이 `<Inbox className="text-muted-foreground" />`처럼 *넘기는 시점*에 색을 결정 — 브랜드 정체성 유지.
+- **EmptyState를 에러에 사용**: 시맨틱이 다릅니다 (`role="status"` vs `role="alert"`). 스크린리더 사용자에게 *상태*와 *경고*가 다르게 안내됩니다.
+- **Skeleton을 baseline에서 합성**: `<TableSkeleton/>`, `<CardSkeleton/>` 같은 *도메인-종속 합성*은 baseline에 두지 않습니다. 매 도메인이 자기 카드/테이블 모양에 맞춰 직접 조합.
+
+---
+
 ## 🚫 함정 모음
 
 ### URL 동기화 (`useListQueryParams`)
@@ -256,7 +371,6 @@ function ProductFeed() {
 
 이 가이드는 5-J가 진행되면서 아래 섹션이 추가됩니다:
 
-- **Empty / Error / Skeleton 프리미티브** — 표시 상태별 표준 컴포넌트 (slot 패턴)
 - **토스트 사용 패턴** — sonner 호출 시점, 낙관적 업데이트 회복
 
 ---
