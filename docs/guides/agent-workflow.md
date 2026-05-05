@@ -1,8 +1,10 @@
 # 🤖 에이전트 워크플로
 
-claude-nextjs-starters의 23개 `.md` 자산(에이전트 / 슬래시 명령어 / 레퍼런스)을 **vibe 코딩 세션**에 어떻게 통합할지에 대한 가이드입니다.
+claude-nextjs-starters의 `.claude/` 산하 **23개 `.md` 자산**(에이전트 12 / 슬래시 명령어 6 / 레퍼런스 5)을 **vibe 코딩 세션**에 어떻게 통합할지에 대한 가이드입니다.
 
 > **이 문서는 매 세션 시작 시 참조됩니다.** 새 작업을 시작하면 먼저 *세션 유형*을 정하고, 해당 유형의 콤보만 사용하세요. 자산을 다 쓰려 하면 마찰만 늘어 vibe가 죽습니다.
+
+> 📌 **책임 분리**: 이 문서는 *`.claude/` 자산*만 인덱싱합니다. _데이터 페칭/인증/스타일링 등 패턴 가이드_(`docs/guides/` + `docs/optional/`)는 [`CLAUDE.md`의 "📚 개발 가이드" 3-tier 섹션](../../CLAUDE.md)을 참조하세요. 세션 유형별로 *어떤 가이드를 함께 펼지*는 §2에 매핑되어 있습니다.
 
 ---
 
@@ -79,6 +81,16 @@ claude-nextjs-starters의 23개 `.md` 자산(에이전트 / 슬래시 명령어 
 
 **호출 안 함**: `prd-generator`, `/review:plan-review`, 5 reviewer 개별 — 작은 기능엔 과함.
 
+**📚 함께 펼치는 가이드** (작업 성격에 맞는 _Reference_ 만 선택):
+
+- 폼 추가 → `forms-react-hook-form.md`
+- 리스트/검색/페이지 → `list-pattern.md`
+- 좋아요/즐겨찾기/장바구니 → `optimistic-update-pattern.md`
+- 알림 메시지 → `toast-pattern.md`
+- 클라이언트 상태 → `state-client.md`
+- 스타일 조정 → `styling-guide.md`
+- RSC vs Client 분리 → `component-patterns.md`
+
 ### 🟡 유형 B: 새 _도메인_ 추가 (`features/<도메인>`)
 
 OpenAPI 엔드포인트 그룹이 새로 추가될 때.
@@ -97,6 +109,12 @@ OpenAPI 엔드포인트 그룹이 새로 추가될 때.
 
 **`/review:plan-review`를 호출하는 이유**: 새 도메인은 _features 레이어링 / proxy.ts matcher / generated import_ 위반이 가장 발생하기 쉬운 지점.
 
+**📚 함께 펼치는 가이드**:
+
+- 🟢 Core 필독: `api-pattern.md`(features 4파일 표준), `mocking-msw.md`(MSW 핸들러 통합)
+- 🟡 Reference: `list-pattern.md`(대부분 도메인 첫 화면이 리스트), `forms-react-hook-form.md`(생성/수정 폼)
+- 🔵 Optional: `../optional/backend-spec-integration.md`(실제 백엔드 연결 _첫 1회_ — SpringDoc/restDocs 합의)
+
 ### 🔵 유형 C: 보안/인증/인프라 영향 변경
 
 `src/lib/api/client.ts`, `src/proxy.ts`, `next.config.ts`, 인증 흐름 등.
@@ -112,6 +130,12 @@ OpenAPI 엔드포인트 그룹이 새로 추가될 때.
 8. /git:commit
 ```
 
+**📚 함께 펼치는 가이드**:
+
+- 🟢 Core: `auth-pattern.md`(인증 흐름 변경 시 필독)
+- 🟡 Reference: `security-headers.md`(CSP / X-Request-ID / 헬스체크), `nextjs-16.md`(`proxy.ts` matcher / async APIs)
+- 🔵 Optional: `../optional/monitoring.md`(Sentry 도입 시 CSP 수정 필요), `../optional/deploy-vercel.md`(환경변수/Runtime 영향)
+
 ### 🟣 유형 D: 대형 기능 — PRD부터
 
 여러 도메인/화면을 아우르는 기능.
@@ -123,6 +147,8 @@ OpenAPI 엔드포인트 그룹이 새로 추가될 때.
 4. /docs:update-roadmap
 5. → 유형 B 또는 A로 단계별 진행
 ```
+
+**📚 함께 펼치는 가이드**: 🟢 Core 5개 전체 한 번 훑기 (`agent-workflow.md` / `project-structure.md` / `api-pattern.md` / `auth-pattern.md` / `mocking-msw.md`). 단계별 진행 시 해당 유형(B/A)의 매핑을 따름.
 
 ---
 
