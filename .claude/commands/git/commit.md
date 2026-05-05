@@ -51,7 +51,7 @@ allowed-tools:
 
 ## 이모지 맵
 
-✨ feat | 🐛 fix | 📝 docs | 💄 style | ♻️ refactor | ⚡ perf | ✅ test | 🔧 chore | 🚀 ci | 🚨 warnings | 🔒️ security | 🚚 move | 🏗️ architecture | ➕ add-dep | ➖ remove-dep | 🌱 seed | 🧑‍💻 dx | 🏷️ types | 👔 business | 🚸 ux | 🩹 minor-fix | 🥅 errors | 🔥 remove | 🎨 structure | 🚑️ hotfix | 🎉 init | 🔖 release | 🚧 wip | 💚 ci-fix | 📌 pin-deps | 👷 ci-build | 📈 analytics | ✏️ typos | ⏪️ revert | 📄 license | 💥 breaking | 🍱 assets | ♿️ accessibility | 💡 comments | 🗃️ db | 🔊 logs | 🔇 remove-logs | 🙈 gitignore | 📸 snapshots | ⚗️ experiment | 🚩 flags | 💫 animations | ⚰️ dead-code | 🦺 validation | ✈️ offline
+feat | fix | docs | style | refactor | perf | test | chore | ci | warnings | security | move | architecture | add-dep | remove-dep | seed | dx | types | business | ux | minor-fix | errors | remove | structure | hotfix | init | release | wip | ci-fix | pin-deps | ci-build | analytics | typos | ⏪ revert | license | breaking | assets | accessibility | comments | db | logs | remove-logs | gitignore | snapshots | experiment | flags | animations | dead-code | validation | offline
 
 ## 분할 기준
 

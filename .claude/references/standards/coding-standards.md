@@ -1,7 +1,7 @@
 # 코딩 표준 참조 (스텁)
 
 > **상태**: TBD — 추후 작성 예정.
-> 현재는 `coding-standards-reviewer` 에이전트가 `CLAUDE.md` "🧭 행동 가이드라인" 1~4절을 직접 인용합니다.
+> 현재는 `coding-standards-reviewer` 에이전트가 `CLAUDE.md` " 행동 가이드라인" 1~4절을 직접 인용합니다.
 
 ## 채워질 내용 (예정)
 

@@ -148,7 +148,7 @@ docs/PRD.md를 기반으로 프로젝트 문서를 자동 생성/업데이트합
 - `playwright.config.ts`, `vitest.config.ts`, `orval.config.ts`, `.github/workflows/ci.yml`
 - `public/mockServiceWorker.js`
 
-> ⚠️ **위 항목들을 "데모 페이지"로 오해하고 제거하면 baseline의 *학습 자료*와 *표준 패턴 템플릿*이 사라집니다.**
+> **위 항목들을 "데모 페이지"로 오해하고 제거하면 baseline의 *학습 자료*와 *표준 패턴 템플릿*이 사라집니다.**
 > 새 프로젝트의 *첫 도메인*으로 *교체*는 가능하지만 (예: `features/users` → `features/products`), *통째로 제거*는 baseline 의도와 충돌합니다.
 
 ### 코드 정리 표준:

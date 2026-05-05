@@ -93,7 +93,7 @@
 'script-src':  ["'self'", "'unsafe-inline'", 'https://dapi.kakao.com'],
 ```
 
-> 💡 **`/api/proxy/*` 경유 호출은 *same-origin*이라 connect-src 'self'로 충분**합니다 — 백엔드 도메인을 CSP에 추가할 필요 _없음_ (이게 우리 baseline의 보안 이점).
+> **`/api/proxy/*` 경유 호출은 *same-origin*이라 connect-src 'self'로 충분**합니다 — 백엔드 도메인을 CSP에 추가할 필요 _없음_ (이게 우리 baseline의 보안 이점).
 
 ---
 
@@ -154,9 +154,9 @@ nonce 기반은 동적이므로 `headers()`에서 CSP 빼고 proxy.ts가 담당.
 
 ### 트레이드오프
 
-- ✅ XSS 2차 방어 매우 강력 (인라인 스크립트 인젝션 차단)
-- ❌ 구현 복잡도 ↑
-- ❌ Next.js의 일부 기능(분석, Vercel toolbar)과 호환성 검증 필요
+- XSS 2차 방어 매우 강력 (인라인 스크립트 인젝션 차단)
+- 구현 복잡도 ↑
+- Next.js의 일부 기능(분석, Vercel toolbar)과 호환성 검증 필요
 
 **우리 baseline은 *unsafe-inline 허용*을 기본으로**. nonce는 _필요한 프로젝트만_ 가이드 따라 마이그레이션.
 
@@ -255,7 +255,7 @@ export async function GET() {
 }
 ```
 
-> ⚠️ **주의**: deep 헬스체크는 *외부 의존성*을 가집니다. 백엔드 일시 장애 시 우리 사이트도 *unhealthy*로 보고됨 → 로드밸런서가 트래픽을 차단할 수 있음. *얕은 헬스체크*를 기본으로, deep는 *별도 모니터링*용으로만.
+> **주의**: deep 헬스체크는 *외부 의존성*을 가집니다. 백엔드 일시 장애 시 우리 사이트도 *unhealthy*로 보고됨 → 로드밸런서가 트래픽을 차단할 수 있음. *얕은 헬스체크*를 기본으로, deep는 *별도 모니터링*용으로만.
 
 ---
 

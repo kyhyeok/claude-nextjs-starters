@@ -57,7 +57,7 @@
 
 백엔드 팀이 제공하는 `swagger.json` / `openapi.yaml`을 받아 `openapi/` 디렉터리에 저장하거나, URL을 `orval.config.ts`의 `input.target`에 지정합니다.
 
-> 📌 백엔드가 SpringDoc / Spring restDocs / 둘 다 사용하는 케이스별 통합 절차는 [`backend-spec-integration.md`](./backend-spec-integration.md)를 참조하세요.
+> 백엔드가 SpringDoc / Spring restDocs / 둘 다 사용하는 케이스별 통합 절차는 [`backend-spec-integration.md`](./backend-spec-integration.md)를 참조하세요.
 
 ```typescript
 // orval.config.ts

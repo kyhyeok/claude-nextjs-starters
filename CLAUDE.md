@@ -80,7 +80,7 @@ LLM이 자주 일으키는 실수를 줄이기 위한 4가지 원칙. **속도�
 - generated 디렉터리(`src/lib/api/generated/`)는 _수동 편집 금지_ — `npm run gen:api`로만 갱신
 
 <details>
-<summary>📜 영어 원문 (Behavioral guidelines to reduce common LLM coding mistakes)</summary>
+<summary> 영어 원문 (Behavioral guidelines to reduce common LLM coding mistakes)</summary>
 
 ```
 Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
@@ -178,32 +178,32 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ### baseline 정체성
 
-- **📋 PRD (스타터 정체성)**: `@/docs/PRD.md`
-- **🗺 개발 로드맵**: `@/docs/ROADMAP.md`
+- **PRD (스타터 정체성)**: `@/docs/PRD.md`
+- **개발 로드맵**: `@/docs/ROADMAP.md`
 
 ### 세션 워크플로 (★ 모든 작업 시작 시 필독)
 
-- **🤖 에이전트 워크플로**: `@/docs/guides/agent-workflow.md` — 23개 `.md` 자산을 세션 유형(A/B/C/D)별로 어떻게 호출할지. 매 세션 시작 시 _세션 유형 결정 → 해당 콤보만 사용_
+- **에이전트 워크플로**: `@/docs/guides/agent-workflow.md` — 23개 `.md` 자산을 세션 유형(A/B/C/D)별로 어떻게 호출할지. 매 세션 시작 시 _세션 유형 결정 → 해당 콤보만 사용_
 
 ### 핵심 패턴 (★ 새 도메인 작업 시 필독)
 
-- **🔌 API 통신 패턴**: `@/docs/guides/api-pattern.md`
-- **🔐 인증 패턴**: `@/docs/guides/auth-pattern.md`
-- **🃏 MSW 모킹**: `@/docs/guides/mocking-msw.md`
-- **🔗 백엔드 스펙 통합**: `@/docs/guides/backend-spec-integration.md` (SpringDoc / restDocs / 둘 다)
-- **🚀 Vercel 배포**: `@/docs/guides/deploy-vercel.md` (Vercel + GitHub Actions 분담)
-- **🧪 테스트 가이드**: `@/docs/guides/testing.md` (Vitest + RTL + Playwright)
-- **🌐 i18n 도입 가이드**: `@/docs/guides/i18n.md` (필요 시 도입 절차 — baseline 코드 기본 미포함)
-- **📊 모니터링 가이드**: `@/docs/guides/monitoring.md` (Sentry + Prom/Graf 분담 + ApiError 통합)
-- **🛡 보안 헤더 + CSP**: `@/docs/guides/security-headers.md` (헬스체크 / X-Request-ID / CSP 정책 / nonce)
+- **API 통신 패턴**: `@/docs/guides/api-pattern.md`
+- **인증 패턴**: `@/docs/guides/auth-pattern.md`
+- **MSW 모킹**: `@/docs/guides/mocking-msw.md`
+- **백엔드 스펙 통합**: `@/docs/guides/backend-spec-integration.md` (SpringDoc / restDocs / 둘 다)
+- **Vercel 배포**: `@/docs/guides/deploy-vercel.md` (Vercel + GitHub Actions 분담)
+- **테스트 가이드**: `@/docs/guides/testing.md` (Vitest + RTL + Playwright)
+- **i18n 도입 가이드**: `@/docs/guides/i18n.md` (필요 시 도입 절차 — baseline 코드 기본 미포함)
+- **모니터링 가이드**: `@/docs/guides/monitoring.md` (Sentry + Prom/Graf 분담 + ApiError 통합)
+- **보안 헤더 + CSP**: `@/docs/guides/security-headers.md` (헬스체크 / X-Request-ID / CSP 정책 / nonce)
 
 ### 일반 가이드
 
-- **📁 프로젝트 구조**: `@/docs/guides/project-structure.md`
-- **🎨 스타일링 가이드**: `@/docs/guides/styling-guide.md`
-- **🧩 컴포넌트 패턴**: `@/docs/guides/component-patterns.md`
-- **⚡ Next.js 16 가이드**: `@/docs/guides/nextjs-16.md`
-- **📝 폼 처리 가이드**: `@/docs/guides/forms-react-hook-form.md`
+- **프로젝트 구조**: `@/docs/guides/project-structure.md`
+- **스타일링 가이드**: `@/docs/guides/styling-guide.md`
+- **컴포넌트 패턴**: `@/docs/guides/component-patterns.md`
+- **Next.js 16 가이드**: `@/docs/guides/nextjs-16.md`
+- **폼 처리 가이드**: `@/docs/guides/forms-react-hook-form.md`
 
 ## ⚡ 자주 사용하는 명령어
 
@@ -260,12 +260,12 @@ npm run build         # 빌드 성공 확인
 
 ## 🚫 핵심 금지사항
 
-- ❌ 컴포넌트에서 `@/lib/api/generated/*` 직접 import (항상 `@/features/<도메인>` 경유)
-- ❌ 컴포넌트에서 `apiClient` 또는 raw fetch 직접 호출 (항상 mutation/query 훅 경유)
-- ❌ 토큰을 `localStorage`/`sessionStorage`에 저장 (httpOnly 쿠키만 사용)
-- ❌ `BACKEND_API_BASE_URL`을 `NEXT_PUBLIC_*`로 노출 (서버 전용 유지)
+- 컴포넌트에서 `@/lib/api/generated/*` 직접 import (항상 `@/features/<도메인>` 경유)
+- 컴포넌트에서 `apiClient` 또는 raw fetch 직접 호출 (항상 mutation/query 훅 경유)
+- 토큰을 `localStorage`/`sessionStorage`에 저장 (httpOnly 쿠키만 사용)
+- `BACKEND_API_BASE_URL`을 `NEXT_PUBLIC_*`로 노출 (서버 전용 유지)
 
 > 외부 백엔드 통신 시 폼은 **mutation 훅 + RHF + Zod** 조합이 1차 권장입니다.
 > Server Actions는 Next.js 내부 라우트나 자체 RSC 흐름에서 사용하세요 — 자세히는 `@/docs/guides/forms-react-hook-form.md`.
 
-💡 **상세 규칙은 위 개발 가이드 문서들을 참조하세요.**
+**상세 규칙은 위 개발 가이드 문서들을 참조하세요.**

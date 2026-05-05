@@ -2,8 +2,8 @@
 
 이 문서는 Next.js 16.2.4에서 React Hook Form + Zod를 활용한 폼 처리 패턴을 제공합니다.
 
-> 📌 **이 baseline 스타터에서는 외부 백엔드와 통신하므로 mutation 훅 + RHF 패턴이 1차 권장입니다.**
-> 첫 섹션 [**🎯 외부 백엔드 통신 시 폼 패턴 (권장)**](#-외부-백엔드-통신-시-폼-패턴-권장)을 먼저 참고하세요.
+> **이 baseline 스타터에서는 외부 백엔드와 통신하므로 mutation 훅 + RHF 패턴이 1차 권장입니다.**
+> 첫 섹션 [** 외부 백엔드 통신 시 폼 패턴 (권장)**](#-외부-백엔드-통신-시-폼-패턴-권장)을 먼저 참고하세요.
 > Server Actions 패턴은 Next.js 자체 폼/내부 라우트 처리 시 사용합니다.
 
 ---
@@ -192,7 +192,7 @@ export function applyApiErrorToForm<T extends FieldValues>(
 
 ## 🔧 Server Actions 기반 패턴 (Next.js 자체 라우트용)
 
-> ⚠️ **외부 백엔드와 통신할 때는 위의 mutation 훅 패턴을 사용하세요.**
+> **외부 백엔드와 통신할 때는 위의 mutation 훅 패턴을 사용하세요.**
 > 아래 섹션은 Next.js 내부 라우트나 자체 RSC 흐름에서만 적용합니다.
 
 ## 🚀 기본 설정 및 셋업

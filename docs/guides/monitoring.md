@@ -2,7 +2,7 @@
 
 이 baseline은 모니터링 SDK를 _기본 포함하지 않습니다_. 프로덕션 출시 직전에 필요한 도구를 이 가이드의 절차로 도입합니다.
 
-> 📌 백엔드 팀이 **Prometheus + Grafana**를 운영하는 환경을 가정합니다. 프론트엔드는 **Sentry**(또는 가벼운 대안)로 *사용자 경험*을 모니터링하는 분담이 자연스럽습니다.
+> 백엔드 팀이 **Prometheus + Grafana**를 운영하는 환경을 가정합니다. 프론트엔드는 **Sentry**(또는 가벼운 대안)로 *사용자 경험*을 모니터링하는 분담이 자연스럽습니다.
 
 ---
 
@@ -61,7 +61,7 @@ SENTRY_ORG=<your-org>
 SENTRY_PROJECT=<your-project>
 ```
 
-> 🚨 **prod 환경에서만 활성화**. `sentry.*.config.ts`의 `enabled` 옵션을 `process.env.NODE_ENV === 'production'`로 게이트.
+> **prod 환경에서만 활성화**. `sentry.*.config.ts`의 `enabled` 옵션을 `process.env.NODE_ENV === 'production'`로 게이트.
 
 ### Step 4 — 우리 baseline의 `ApiError`와 통합
 
@@ -222,11 +222,11 @@ Sentry 외에도 _목적별로_ 다른 가벼운 도구를 함께 쓰는 게 일
 
 ## 3️⃣ 환경별 활성화 매트릭스
 
-| 환경               | Sentry                | Vercel Analytics | 비고                                    |
-| ------------------ | --------------------- | ---------------- | --------------------------------------- |
-| Production         | ✅                    | ✅               | 모두 활성                               |
-| Preview (PR)       | ❌ 또는 별도 프로젝트 | ❌               | Sentry는 _prod 전용_ — preview 노이즈 X |
-| Development (로컬) | ❌                    | ❌               | dev는 콘솔로 충분                       |
+| 환경               | Sentry             | Vercel Analytics | 비고                                    |
+| ------------------ | ------------------ | ---------------- | --------------------------------------- |
+| Production         |                    |                  | 모두 활성                               |
+| Preview (PR)       | 또는 별도 프로젝트 |                  | Sentry는 _prod 전용_ — preview 노이즈 X |
+| Development (로컬) |                    |                  | dev는 콘솔로 충분                       |
 
 `enabled: process.env.NODE_ENV === 'production'`로 게이트.
 

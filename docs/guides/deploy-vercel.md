@@ -2,7 +2,7 @@
 
 이 문서는 claude-nextjs-starters baseline을 **Vercel에 배포**할 때의 셋업·환경변수·운영 패턴을 정의합니다.
 
-> ⚠️ AWS Amplify, Cloudflare Pages 등 다른 플랫폼을 쓴다면 이 문서가 그대로 적용되지 않습니다 — 환경변수 셋업과 빌드 명령은 동일하지만, Edge Runtime 동작/Preview 흐름이 다를 수 있습니다.
+> AWS Amplify, Cloudflare Pages 등 다른 플랫폼을 쓴다면 이 문서가 그대로 적용되지 않습니다 — 환경변수 셋업과 빌드 명령은 동일하지만, Edge Runtime 동작/Preview 흐름이 다를 수 있습니다.
 
 ---
 
@@ -36,24 +36,24 @@
 
 Vercel 대시보드 → Project → **Settings** → **Environment Variables**
 
-| 변수                           | Production                | Preview                      | Development             | 민감도       |
-| ------------------------------ | ------------------------- | ---------------------------- | ----------------------- | ------------ |
-| `BACKEND_API_BASE_URL`         | 실 백엔드 URL             | staging URL                  | localhost               | 🔒 서버 전용 |
-| `NEXT_PUBLIC_APP_URL`          | `https://app.example.com` | (자동: VERCEL_URL 사용 가능) | `http://localhost:3000` | 공개         |
-| `NEXT_PUBLIC_API_MOCK_ENABLED` | **❌ 절대 등록 X**        | (옵션)                       | `true` 가능             | 공개         |
+| 변수                           | Production                | Preview                      | Development             | 민감도    |
+| ------------------------------ | ------------------------- | ---------------------------- | ----------------------- | --------- |
+| `BACKEND_API_BASE_URL`         | 실 백엔드 URL             | staging URL                  | localhost               | 서버 전용 |
+| `NEXT_PUBLIC_APP_URL`          | `https://app.example.com` | (자동: VERCEL_URL 사용 가능) | `http://localhost:3000` | 공개      |
+| `NEXT_PUBLIC_API_MOCK_ENABLED` | ** 절대 등록 X**          | (옵션)                       | `true` 가능             | 공개      |
 
-> 🚨 **`NEXT_PUBLIC_API_MOCK_ENABLED`를 prod에 `true`로 두면 클라이언트에 mock 코드가 로드되어 위험합니다.** Vercel의 _Production_ 환경에서는 등록조차 하지 마세요.
+> **`NEXT_PUBLIC_API_MOCK_ENABLED`를 prod에 `true`로 두면 클라이언트에 mock 코드가 로드되어 위험합니다.** Vercel의 _Production_ 환경에서는 등록조차 하지 마세요.
 
-> 🚨 **`BACKEND_API_BASE_URL`은 절대 `NEXT_PUBLIC_*`로 노출하지 마세요.** 클라이언트 번들에 백엔드 URL이 박히는 보안 사고가 됩니다.
+> **`BACKEND_API_BASE_URL`은 절대 `NEXT_PUBLIC_*`로 노출하지 마세요.** 클라이언트 번들에 백엔드 URL이 박히는 보안 사고가 됩니다.
 
 ### 3) Branch Protection 설정
 
 GitHub 레포 → **Settings** → **Branches** → **Branch protection rules** → `main`:
 
-- ✅ **Require a pull request before merging**
-- ✅ **Require status checks to pass before merging**
+- **Require a pull request before merging**
+- **Require status checks to pass before merging**
   - 등록할 체크: `Check (typecheck + lint + format)`, `Build (next build)`
-- ✅ (옵션) **Require branches to be up to date before merging**
+- (옵션) **Require branches to be up to date before merging**
 
 이렇게 해야 GitHub Actions CI가 통과해야만 main에 머지됩니다.
 

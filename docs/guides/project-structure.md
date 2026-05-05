@@ -231,7 +231,7 @@ import { Button } from '../../../components/ui/button'
 
 - `@/app` → `src/app`
 - `@/components` → `src/components`
-- `@/features` → `src/features` ⭐
+- `@/features` → `src/features`
 - `@/lib` → `src/lib`
 - `@/mocks` → `src/mocks`
 
