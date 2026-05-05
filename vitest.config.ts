@@ -16,6 +16,11 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    // 상대 경로 fetch(`/api/proxy/*`)가 절대 URL로 resolve되도록 origin 고정.
+    // 이게 없으면 jsdom의 fetch가 'Failed to parse URL'로 throw됩니다.
+    environmentOptions: {
+      jsdom: { url: 'http://localhost:3000' },
+    },
     globals: true,
     css: false,
     setupFiles: ['./src/test/setup.ts'],

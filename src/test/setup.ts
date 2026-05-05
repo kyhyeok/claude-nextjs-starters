@@ -56,6 +56,26 @@ if (!Element.prototype.scrollIntoView) {
   Element.prototype.scrollIntoView = vi.fn()
 }
 
+// jsdom + undici(Node 18+ native fetch)는 상대 경로(`/api/proxy/...`)를
+// location.origin으로 자동 prefix 하지 않음 — 브라우저 동작과 동일하게 보정.
+// fetch + Request 둘 다 patch (ky 내부에서 Request 생성 시 throw 방지).
+function _absolutize(input: RequestInfo | URL): RequestInfo | URL {
+  if (typeof input === 'string' && input.startsWith('/')) {
+    return window.location.origin + input
+  }
+  return input
+}
+const _originalFetch = globalThis.fetch
+globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) =>
+  _originalFetch(_absolutize(input), init)) as typeof fetch
+const _OriginalRequest = globalThis.Request
+class _PatchedRequest extends _OriginalRequest {
+  constructor(input: RequestInfo | URL, init?: RequestInit) {
+    super(_absolutize(input), init)
+  }
+}
+globalThis.Request = _PatchedRequest as typeof Request
+
 // MSW node server lifecycle
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
 afterEach(() => server.resetHandlers())
