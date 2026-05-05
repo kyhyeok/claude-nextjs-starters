@@ -8,13 +8,11 @@ orval.config.ts의 input.target을 백엔드 스펙 URL로 변경하세요.
 
  * OpenAPI spec version: 1.0.0
  */
+import type { Product } from './product';
 
-export * from './createProductInput';
-export * from './createUserInput';
-export * from './errorResponse';
-export * from './listProductsParams';
-export * from './listUsersParams';
-export * from './product';
-export * from './productPage';
-export * from './user';
-export * from './userPage';
+export interface ProductPage {
+  items: Product[];
+  page: number;
+  size: number;
+  total: number;
+}

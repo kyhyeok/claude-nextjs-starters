@@ -12,6 +12,8 @@ servers:
 tags:
   - name: users
     description: 사용자 도메인 (예시)
+  - name: products
+    description: 상품 도메인 (두 번째 템플릿 — features 패턴 비교 학습용)
 
 paths:
   /users:
@@ -87,6 +89,79 @@ paths:
         '204':
           description: No Content
 
+  /products:
+    get:
+      tags: [products]
+      summary: 상품 목록 조회
+      operationId: listProducts
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1, minimum: 1 }
+        - name: size
+          in: query
+          schema: { type: integer, default: 20, minimum: 1, maximum: 100 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductPage'
+    post:
+      tags: [products]
+      summary: 상품 생성
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+  /products/{id}:
+    get:
+      tags: [products]
+      summary: 상품 단건 조회
+      operationId: getProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags: [products]
+      summary: 상품 삭제
+      operationId: deleteProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: No Content
+
 components:
   schemas:
     User:
@@ -115,6 +190,33 @@ components:
       properties:
         email: { type: string, format: email }
         name: { type: string, minLength: 1 }
+
+    Product:
+      type: object
+      required: [id, name, price, createdAt]
+      properties:
+        id: { type: string, example: 'prd_01HABCDEFG' }
+        name: { type: string, example: 'Espresso Beans 1kg' }
+        price: { type: integer, example: 24000 }
+        createdAt: { type: string, format: date-time }
+
+    ProductPage:
+      type: object
+      required: [items, page, size, total]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/Product' }
+        page: { type: integer, example: 1 }
+        size: { type: integer, example: 20 }
+        total: { type: integer, example: 17 }
+
+    CreateProductInput:
+      type: object
+      required: [name, price]
+      properties:
+        name: { type: string, minLength: 1 }
+        price: { type: integer, minimum: 0 }
 
     ErrorResponse:
       type: object

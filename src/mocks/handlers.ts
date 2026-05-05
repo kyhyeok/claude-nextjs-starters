@@ -1,5 +1,6 @@
 import type { HttpHandler } from 'msw'
 import { getUsersMock } from '@/lib/api/generated/users/users.msw'
+import { getProductsMock } from '@/lib/api/generated/products/products.msw'
 
 /**
  * MSW 핸들러 통합.
@@ -16,4 +17,4 @@ import { getUsersMock } from '@/lib/api/generated/users/users.msw'
  *   ...
  *   getListUsersMockHandler({ items: [...], page: 1, size: 20, total: 1 })
  */
-export const handlers: HttpHandler[] = [...getUsersMock()]
+export const handlers: HttpHandler[] = [...getUsersMock(), ...getProductsMock()]
