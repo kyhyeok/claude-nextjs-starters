@@ -4,7 +4,7 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **최종 업데이트**: 2026-05-05
-**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J + 5-K-pre 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
+**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J + 5-K-pre + 5-L 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
 
 > baseline은 *런타임 코드*뿐 아니라 _Claude Code 협업 인프라_(`.claude/` 권한·훅)도 포함합니다.
 
@@ -161,6 +161,37 @@ baseline의 *Claude Code 협업 인프라*를 권한 정책 + 자동 검증 훅�
 - 미사용 Slack 훅 2종 제거 (`stop-hook.sh`, `notification-hook.sh`) — 외부 참조 0건 grep 확인 후 삭제
 
 검증: ask 등급은 실 운영 사이클 1회 (`git commit` + `git push`)에서 정상 동작 확인.
+
+### Phase 5-L: 문서 다이어트 + 테스트 옵션화 ✅
+
+baseline 정체성 검증 결과 _코드는 lean / 문서는 over-engineered_ 진단(문서 9,115 LOC vs 코드 4,310 LOC = **2.11×**, 22개 가이드 1차 학습 부담). PRD 약속인 _"1일 onboarding"_ 을 실제로 닫기 위해 가이드를 **3-tier(Core 5 / Reference 10 / Optional 5+1)** 로 분류하고, Playwright E2E를 옵션으로 격하.
+
+**산출 (3단계)**:
+
+- 1단계 (커밋 `30becad`): 22개 가이드를 Core(5) / Reference(10) / Optional(5)로 분류. _baseline 코드 미포함_ 5종(`backend-spec-integration` / `deploy-vercel` / `file-upload-pattern` / `i18n` / `monitoring`)을 `docs/optional/`로 격리 (`git mv` rename 100%, 내용 무변동). CLAUDE.md / PRD.md / README.md "개발 가이드" 섹션을 3-tier 구조로 재배치. ROADMAP / api-pattern / security-headers 내부 참조 경로 동시 갱신.
+- 2단계 (커밋 `8e071ac`): `agent-workflow.md` 보강 — §1 도입부에 *`.claude/` 자산 23개*와 _docs/guides 22개_ 책임 분리 명시. §2 세션 유형 A/B/C/D 각각에 _"📚 함께 펼치는 가이드"_ 박스 추가 (작업 성격별 Core/Reference/Optional 매핑). 자산 개수(23) 표현은 정확하므로 그대로 유지.
+- 3단계 (커밋 `6f48326`): Playwright E2E를 옵션으로 격하. `@playwright/test` devDep + `test:e2e`/`test:e2e:ui` scripts + `playwright.config.ts`(75 LOC) + `tests/e2e/`(64 LOC) + `ci.yml` e2e job(38줄) 제거. 동등한 코드를 `docs/optional/e2e-playwright.md`의 _§보존 코드 1~4_ 에 그대로 복사 보존(5분 재도입 절차). `testing.md`는 _기본 2계층(단위/컴포넌트) + 옵션 E2E_ 로 격하.
+
+**의존성 변화**: `@playwright/test@^1.59.1` 제거 (devDep -1). _Next.js 16의 optional peer dependency_ 로 lockfile에는 자동 흔적이 남지만 빌드/런타임 영향 0.
+
+**측정 변화 (Phase 5-L 전 → 후)**:
+
+| 지표                        | 이전         | 현재         | 효과                        |
+| --------------------------- | ------------ | ------------ | --------------------------- |
+| 1차 학습 부담 (Core LOC)    | 9,115 (22개) | 1,445 (5개)  | **-84%**                    |
+| 가이드 LOC (`docs/guides`)  | ~9,115       | 6,749 (15개) | -26%                        |
+| 옵션 LOC (`docs/optional`)  | 0            | 2,157 (6개)  | 신규 — 도입 시점만 펼침     |
+| dev deps                    | 25           | 24           | -1 (Playwright)             |
+| 직접 의존성 / Core LOC 비율 | 2.11×        | **0.34×**    | _PRD "1일 onboarding" 정합_ |
+
+**효과**:
+
+- _신규 멤버 1차 학습 경로_ 가 22개 → **5개** 로 닫힘 (Core: agent-workflow / project-structure / api-pattern / auth-pattern / mocking-msw)
+- _세션 진입점_(`agent-workflow.md`)이 _3-tier 구조_ 와 _가이드 매핑_ 양쪽 인덱스 통합 → 세션 유형 결정 → .claude 자산 + docs 가이드 한 흐름
+- _Playwright 부재 비용 0_ — 옵션 가이드의 §보존 코드 4종을 그대로 복사하면 5분 안에 baseline 시점 상태 복구
+- baseline 정체성("필요 시 추가") 정합 강화
+
+**검증**: 단계별로 `npm run check-all` (typecheck + lint + format) + `npm run build` 통과. Vitest 8/8 통과. 옛 가이드 경로 잔재 0건 / 새 경로 참조 24건 정상 분포.
 
 ### Phase 5-K-pre: baseline 정체성 정리 (랜딩 + UI 셸 + 의존성) ✅
 
