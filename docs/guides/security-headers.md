@@ -314,7 +314,7 @@ export async function GET() {
 
 - API 통신 패턴: [`api-pattern.md`](./api-pattern.md)
 - 인증 패턴: [`auth-pattern.md`](./auth-pattern.md)
-- 모니터링: [`monitoring.md`](./monitoring.md) — Sentry 도입 시 CSP 수정 필요
+- 모니터링: [`../optional/monitoring.md`](../optional/monitoring.md) — Sentry 도입 시 CSP 수정 필요
 - 외부 자료:
   - [MDN CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
   - [Next.js Content Security Policy](https://nextjs.org/docs/app/guides/content-security-policy)

@@ -79,7 +79,7 @@
 
 ### Phase 4.6: 백엔드 스펙 통합 가이드 ✅
 
-- `docs/guides/backend-spec-integration.md` 신규 작성
+- `docs/optional/backend-spec-integration.md` 신규 작성
 - SpringDoc(OpenAPI) / Spring restDocs / 둘 다 사용 시나리오 3종 정리
 - `restdocs-api-spec` 변환 플러그인 적용 절차
 - orval `input.target` 옵션별 사용법 (URL / 파일 / multi-config)
@@ -116,7 +116,7 @@
 
 - `.github/workflows/ci.yml` 작성 (check + build, concurrency cancel-in-progress)
 - Phase 5-A 도입 후 test/e2e job 활성화 + Playwright 브라우저 캐싱 + report 아티팩트
-- `docs/guides/deploy-vercel.md` 신규 작성 (책임 분담/환경변수/Runtime/함정)
+- `docs/optional/deploy-vercel.md` 신규 작성 (책임 분담/환경변수/Runtime/함정)
 - Branch Protection 셋업 가이드 포함
 - CLAUDE.md / PRD.md에 가이드 링크 추가
 
@@ -219,7 +219,7 @@ baseline 경계 정책의 _Layer 1~4_ 영역에서 도메인 표시 횡단 패�
 
 baseline 코드는 단일 언어 유지. 다국어 필요 시 가이드 따라 1~2시간에 도입.
 
-- `docs/guides/i18n.md` 신규 작성 (책임 분담 / 패턴 비교 / 도입 절차 10단계 / 백엔드 합의 체크리스트 / 함정 7종)
+- `docs/optional/i18n.md` 신규 작성 (책임 분담 / 패턴 비교 / 도입 절차 10단계 / 백엔드 합의 체크리스트 / 함정 7종)
 - CLAUDE.md / PRD.md에 가이드 링크 추가
 - [ ] (도입 시점에) next-intl 설치 + `[locale]` 라우팅 + 메시지 번들
 - [ ] (도입 시점에) `proxy.ts`에 `intlMiddleware` 합성
@@ -230,7 +230,7 @@ baseline 코드는 단일 언어 유지. 다국어 필요 시 가이드 따라 1
 
 baseline 코드는 SDK 미포함. 프로덕션 출시 직전에 가이드 따라 도입.
 
-- `docs/guides/monitoring.md` 신규 작성 (Prom+Graf vs Sentry 분담 / Sentry 도입 8단계 / 가벼운 대안 5종 비교 / `ApiError` 통합 패턴 / PII 필터링 / 무료 한도 관리 / 백엔드 합의)
+- `docs/optional/monitoring.md` 신규 작성 (Prom+Graf vs Sentry 분담 / Sentry 도입 8단계 / 가벼운 대안 5종 비교 / `ApiError` 통합 패턴 / PII 필터링 / 무료 한도 관리 / 백엔드 합의)
 - CLAUDE.md / PRD.md에 가이드 링크 추가
 - [ ] (도입 시점에) `@sentry/nextjs` 설치 + wizard
 - [ ] (도입 시점에) `client.ts`의 5xx만 captureException

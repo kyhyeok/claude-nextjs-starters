@@ -212,23 +212,37 @@ DX           ESLint 9, Prettier, Husky, lint-staged, server-only
 
 ## 📎 관련 문서
 
-- **개발 로드맵**: [`./ROADMAP.md`](./ROADMAP.md)
+> **3-tier 학습 경로**: Core(필독 5) → Reference(필요 시) → Optional(도입 시점). 신규 멤버는 Core 5개로 시작.
+
+### 🟢 Core (1일 onboarding 필독)
+
+- **에이전트 워크플로**: [`./guides/agent-workflow.md`](./guides/agent-workflow.md)
 - **프로젝트 구조**: [`./guides/project-structure.md`](./guides/project-structure.md)
 - **API 통신 패턴**: [`./guides/api-pattern.md`](./guides/api-pattern.md)
 - **인증 패턴**: [`./guides/auth-pattern.md`](./guides/auth-pattern.md)
 - **MSW 모킹**: [`./guides/mocking-msw.md`](./guides/mocking-msw.md)
-- **백엔드 스펙 통합**: [`./guides/backend-spec-integration.md`](./guides/backend-spec-integration.md)
-- **클라이언트 상태 관리**: [`./guides/state-client.md`](./guides/state-client.md) (Zustand + 서버/클라이언트 상태 분리)
-- **리스트 패턴**: [`./guides/list-pattern.md`](./guides/list-pattern.md) (검색·필터·페이지·정렬·무한스크롤 + Empty/Error/Skeleton)
-- **토스트 사용 패턴**: [`./guides/toast-pattern.md`](./guides/toast-pattern.md) (sonner 호출 시점 + 표준 3단계 패턴)
-- **낙관적 업데이트 패턴**: [`./guides/optimistic-update-pattern.md`](./guides/optimistic-update-pattern.md) (좋아요/즐겨찾기/장바구니 — `applyOptimisticUpdate` 헬퍼 + 표준 4단계 + 롤백)
-- **파일 업로드 가이드**: [`./guides/file-upload-pattern.md`](./guides/file-upload-pattern.md) (옵션 — 필요 시 / presigned vs multipart vs proxy 경유)
-- **Vercel 배포**: [`./guides/deploy-vercel.md`](./guides/deploy-vercel.md)
-- **테스트 가이드**: [`./guides/testing.md`](./guides/testing.md)
-- **i18n 도입 가이드**: [`./guides/i18n.md`](./guides/i18n.md) (옵션 — 필요 시)
-- **모니터링 가이드**: [`./guides/monitoring.md`](./guides/monitoring.md) (Sentry + Prom/Graf 분담)
-- **보안 헤더 + CSP**: [`./guides/security-headers.md`](./guides/security-headers.md) (헬스체크 / X-Request-ID / CSP)
+
+### 🟡 Reference (필요 시 펼침)
+
+- **폼 처리**: [`./guides/forms-react-hook-form.md`](./guides/forms-react-hook-form.md)
+- **리스트 패턴**: [`./guides/list-pattern.md`](./guides/list-pattern.md)
+- **낙관적 업데이트 패턴**: [`./guides/optimistic-update-pattern.md`](./guides/optimistic-update-pattern.md)
+- **토스트 사용 패턴**: [`./guides/toast-pattern.md`](./guides/toast-pattern.md)
+- **클라이언트 상태 관리**: [`./guides/state-client.md`](./guides/state-client.md)
 - **스타일링**: [`./guides/styling-guide.md`](./guides/styling-guide.md)
 - **컴포넌트 패턴**: [`./guides/component-patterns.md`](./guides/component-patterns.md)
 - **Next.js 16**: [`./guides/nextjs-16.md`](./guides/nextjs-16.md)
-- **폼 처리**: [`./guides/forms-react-hook-form.md`](./guides/forms-react-hook-form.md)
+- **보안 헤더 + CSP**: [`./guides/security-headers.md`](./guides/security-headers.md)
+- **테스트 가이드**: [`./guides/testing.md`](./guides/testing.md)
+
+### 🔵 Optional (도입 시점만 — `docs/optional/`)
+
+- **백엔드 스펙 통합**: [`./optional/backend-spec-integration.md`](./optional/backend-spec-integration.md)
+- **파일 업로드 가이드**: [`./optional/file-upload-pattern.md`](./optional/file-upload-pattern.md)
+- **Vercel 배포**: [`./optional/deploy-vercel.md`](./optional/deploy-vercel.md)
+- **i18n 도입 가이드**: [`./optional/i18n.md`](./optional/i18n.md)
+- **모니터링 가이드**: [`./optional/monitoring.md`](./optional/monitoring.md)
+
+### 메타
+
+- **개발 로드맵**: [`./ROADMAP.md`](./ROADMAP.md)

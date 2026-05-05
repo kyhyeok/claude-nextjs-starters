@@ -176,39 +176,43 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ## 📚 개발 가이드
 
+> **3-tier 학습 경로**: Core(필독 5) → Reference(필요 시 펼침) → Optional(도입 시점만). _신규 멤버는 Core 5개로 시작_.
+
 ### baseline 정체성
 
 - **PRD (스타터 정체성)**: `@/docs/PRD.md`
 - **개발 로드맵**: `@/docs/ROADMAP.md`
 
-### 세션 워크플로 (★ 모든 작업 시작 시 필독)
+### 🟢 Core (★ 1일 onboarding 필독 — 5개)
 
-- **에이전트 워크플로**: `@/docs/guides/agent-workflow.md` — 23개 `.md` 자산을 세션 유형(A/B/C/D)별로 어떻게 호출할지. 매 세션 시작 시 _세션 유형 결정 → 해당 콤보만 사용_
+- **에이전트 워크플로**: `@/docs/guides/agent-workflow.md` — 모든 세션 시작점, 가이드 자산을 세션 유형별로 어떻게 호출할지
+- **프로젝트 구조**: `@/docs/guides/project-structure.md` — 디렉터리/레이어링/별칭
+- **API 통신 패턴**: `@/docs/guides/api-pattern.md` — TanStack Query + ky + features 표준
+- **인증 패턴**: `@/docs/guides/auth-pattern.md` — httpOnly 쿠키 + 401 리프레시 + 보호 라우트
+- **MSW 모킹**: `@/docs/guides/mocking-msw.md` — 백엔드 미완성 시 선행 개발
 
-### 핵심 패턴 (★ 새 도메인 작업 시 필독)
+### 🟡 Reference (필요 시 펼침)
 
-- **API 통신 패턴**: `@/docs/guides/api-pattern.md`
-- **인증 패턴**: `@/docs/guides/auth-pattern.md`
-- **MSW 모킹**: `@/docs/guides/mocking-msw.md`
-- **백엔드 스펙 통합**: `@/docs/guides/backend-spec-integration.md` (SpringDoc / restDocs / 둘 다)
-- **클라이언트 상태 관리**: `@/docs/guides/state-client.md` (Zustand + 서버/클라이언트 상태 분리)
+- **폼 처리**: `@/docs/guides/forms-react-hook-form.md` (RHF + Zod + mutation 훅)
 - **리스트 패턴**: `@/docs/guides/list-pattern.md` (검색·필터·페이지·정렬·무한스크롤 + Empty/Error/Skeleton)
-- **토스트 사용 패턴**: `@/docs/guides/toast-pattern.md` (sonner 호출 시점 + 표준 3단계 패턴)
 - **낙관적 업데이트 패턴**: `@/docs/guides/optimistic-update-pattern.md` (좋아요/즐겨찾기/장바구니 — `applyOptimisticUpdate` 헬퍼 + 표준 4단계 + 롤백)
-- **파일 업로드 가이드**: `@/docs/guides/file-upload-pattern.md` (필요 시 도입 — presigned URL / 다이렉트 multipart / proxy 경유 흐름 비교 + Vercel 4.5MB 함정)
-- **Vercel 배포**: `@/docs/guides/deploy-vercel.md` (Vercel + GitHub Actions 분담)
-- **테스트 가이드**: `@/docs/guides/testing.md` (Vitest + RTL + Playwright)
-- **i18n 도입 가이드**: `@/docs/guides/i18n.md` (필요 시 도입 절차 — baseline 코드 기본 미포함)
-- **모니터링 가이드**: `@/docs/guides/monitoring.md` (Sentry + Prom/Graf 분담 + ApiError 통합)
+- **토스트 사용 패턴**: `@/docs/guides/toast-pattern.md` (sonner 호출 시점 + 표준 3단계 패턴)
+- **클라이언트 상태 관리**: `@/docs/guides/state-client.md` (Zustand + 서버/클라이언트 상태 분리)
+- **스타일링**: `@/docs/guides/styling-guide.md` (TailwindCSS v4 + shadcn)
+- **컴포넌트 패턴**: `@/docs/guides/component-patterns.md` (RSC / Client / 변형)
+- **Next.js 16**: `@/docs/guides/nextjs-16.md` (proxy/async APIs/Turbopack)
 - **보안 헤더 + CSP**: `@/docs/guides/security-headers.md` (헬스체크 / X-Request-ID / CSP 정책 / nonce)
+- **테스트 가이드**: `@/docs/guides/testing.md` (Vitest + RTL)
 
-### 일반 가이드
+### 🔵 Optional (도입 시점에만 펼침 — `docs/optional/`)
 
-- **프로젝트 구조**: `@/docs/guides/project-structure.md`
-- **스타일링 가이드**: `@/docs/guides/styling-guide.md`
-- **컴포넌트 패턴**: `@/docs/guides/component-patterns.md`
-- **Next.js 16 가이드**: `@/docs/guides/nextjs-16.md`
-- **폼 처리 가이드**: `@/docs/guides/forms-react-hook-form.md`
+> baseline 코드에 _기본 포함되지 않음_. 실제 도입 시점에 절차 따라 활성화.
+
+- **백엔드 스펙 통합**: `@/docs/optional/backend-spec-integration.md` (SpringDoc / restDocs — 실제 백엔드 연결 시점)
+- **파일 업로드 가이드**: `@/docs/optional/file-upload-pattern.md` (presigned URL / 다이렉트 multipart / proxy 경유 비교 + Vercel 4.5MB 함정)
+- **Vercel 배포**: `@/docs/optional/deploy-vercel.md` (Vercel + GitHub Actions 분담)
+- **i18n 도입 가이드**: `@/docs/optional/i18n.md` (다국어 필요 시 도입 절차)
+- **모니터링 가이드**: `@/docs/optional/monitoring.md` (Sentry + Prom/Graf 분담 + ApiError 통합)
 
 ## ⚡ 자주 사용하는 명령어
 

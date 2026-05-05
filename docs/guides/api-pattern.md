@@ -57,7 +57,7 @@
 
 백엔드 팀이 제공하는 `swagger.json` / `openapi.yaml`을 받아 `openapi/` 디렉터리에 저장하거나, URL을 `orval.config.ts`의 `input.target`에 지정합니다.
 
-> 백엔드가 SpringDoc / Spring restDocs / 둘 다 사용하는 케이스별 통합 절차는 [`backend-spec-integration.md`](./backend-spec-integration.md)를 참조하세요.
+> 백엔드가 SpringDoc / Spring restDocs / 둘 다 사용하는 케이스별 통합 절차는 [`../optional/backend-spec-integration.md`](../optional/backend-spec-integration.md)를 참조하세요.
 
 ```typescript
 // orval.config.ts
@@ -341,7 +341,7 @@ return useQuery({ queryFn: () => listUsers(params) })  // .data 추출 안 함
 
 ## 📎 관련 문서
 
-- 백엔드 스펙 통합 (SpringDoc/restDocs): [`backend-spec-integration.md`](./backend-spec-integration.md)
+- 백엔드 스펙 통합 (SpringDoc/restDocs): [`../optional/backend-spec-integration.md`](../optional/backend-spec-integration.md)
 - 인증 흐름: [`auth-pattern.md`](./auth-pattern.md)
 - MSW 활용: [`mocking-msw.md`](./mocking-msw.md)
 - 폼 + mutation: [`forms-react-hook-form.md`](./forms-react-hook-form.md)

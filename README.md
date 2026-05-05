@@ -67,24 +67,25 @@ npm run test:e2e         # Playwright E2E
 
 새 프로젝트를 시작하기 전에 _최소_ `📋 PRD`와 `🔌 API 통신 패턴`을 읽으세요.
 
-| 문서                                                             | 내용                                    |
-| ---------------------------------------------------------------- | --------------------------------------- |
-| [📋 PRD](./docs/PRD.md)                                          | baseline 정체성/제공 기능/사용 시나리오 |
-| [🗺 ROADMAP](./docs/ROADMAP.md)                                  | 완료된 Phase + 향후 옵션                |
-| [📁 프로젝트 구조](./docs/guides/project-structure.md)           | 디렉터리/네이밍/별칭                    |
-| [🔌 API 통신 패턴](./docs/guides/api-pattern.md)                 | TanStack Query + ky + features          |
-| [🔐 인증 패턴](./docs/guides/auth-pattern.md)                    | httpOnly 쿠키 + 401 리프레시            |
-| [🃏 MSW 모킹](./docs/guides/mocking-msw.md)                      | 백엔드 미완성 시 선행 개발              |
-| [🔗 백엔드 스펙 통합](./docs/guides/backend-spec-integration.md) | SpringDoc / restDocs                    |
-| [🧪 테스트](./docs/guides/testing.md)                            | Vitest + RTL + Playwright               |
-| [🛡 보안 헤더 + CSP](./docs/guides/security-headers.md)          | HSTS / CSP / 헬스체크 / X-Request-ID    |
-| [🚀 Vercel 배포](./docs/guides/deploy-vercel.md)                 | Vercel + GitHub Actions 분담            |
-| [📊 모니터링](./docs/guides/monitoring.md)                       | Sentry + Prometheus/Grafana 분담        |
-| [🌐 i18n 도입](./docs/guides/i18n.md)                            | 옵션 — 필요 시 도입 절차                |
-| [🎨 스타일링](./docs/guides/styling-guide.md)                    | TailwindCSS + mobile-first              |
-| [🧩 컴포넌트 패턴](./docs/guides/component-patterns.md)          | RSC / Client / 변형                     |
-| [⚡ Next.js 16](./docs/guides/nextjs-16.md)                      | proxy/async APIs/Turbopack              |
-| [📝 폼 처리](./docs/guides/forms-react-hook-form.md)             | RHF + Zod + mutation                    |
+| 문서                                                               | 내용                                    |
+| ------------------------------------------------------------------ | --------------------------------------- |
+| [📋 PRD](./docs/PRD.md)                                            | baseline 정체성/제공 기능/사용 시나리오 |
+| [🗺 ROADMAP](./docs/ROADMAP.md)                                    | 완료된 Phase + 향후 옵션                |
+| [📁 프로젝트 구조](./docs/guides/project-structure.md)             | 디렉터리/네이밍/별칭                    |
+| [🔌 API 통신 패턴](./docs/guides/api-pattern.md)                   | TanStack Query + ky + features          |
+| [🔐 인증 패턴](./docs/guides/auth-pattern.md)                      | httpOnly 쿠키 + 401 리프레시            |
+| [🃏 MSW 모킹](./docs/guides/mocking-msw.md)                        | 백엔드 미완성 시 선행 개발              |
+| [🧪 테스트](./docs/guides/testing.md)                              | Vitest + RTL                            |
+| [🛡 보안 헤더 + CSP](./docs/guides/security-headers.md)            | HSTS / CSP / 헬스체크 / X-Request-ID    |
+| [🔗 백엔드 스펙 통합](./docs/optional/backend-spec-integration.md) | _옵션_ — SpringDoc / restDocs           |
+| [🚀 Vercel 배포](./docs/optional/deploy-vercel.md)                 | _옵션_ — Vercel + GitHub Actions 분담   |
+| [📊 모니터링](./docs/optional/monitoring.md)                       | _옵션_ — Sentry + Prom/Graf 분담        |
+| [🌐 i18n 도입](./docs/optional/i18n.md)                            | _옵션_ — 다국어 도입 절차               |
+| [📎 파일 업로드](./docs/optional/file-upload-pattern.md)           | _옵션_ — presigned / multipart / proxy  |
+| [🎨 스타일링](./docs/guides/styling-guide.md)                      | TailwindCSS + mobile-first              |
+| [🧩 컴포넌트 패턴](./docs/guides/component-patterns.md)            | RSC / Client / 변형                     |
+| [⚡ Next.js 16](./docs/guides/nextjs-16.md)                        | proxy/async APIs/Turbopack              |
+| [📝 폼 처리](./docs/guides/forms-react-hook-form.md)               | RHF + Zod + mutation                    |
 
 > 🤖 **Claude Code 사용자**: [`CLAUDE.md`](./CLAUDE.md)에 개발 지침과 자주 쓰는 명령이 정리되어 있습니다.
 
