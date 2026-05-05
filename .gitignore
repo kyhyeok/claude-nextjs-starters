@@ -50,3 +50,6 @@ next-env.d.ts
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Claude Code 개인 설정 — baseline 공유 정책은 .claude/settings.json 에 유지
+.claude/settings.local.json
