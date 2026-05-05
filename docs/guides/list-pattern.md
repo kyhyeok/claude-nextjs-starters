@@ -144,7 +144,95 @@ function SearchBar() {
 
 ---
 
+## 🌀 페이지네이션 vs 무한스크롤
+
+같은 list 엔드포인트라도 UX 의도에 따라 패턴을 골라야 합니다.
+
+| 상황                                   | 권장         | 이유                               |
+| -------------------------------------- | ------------ | ---------------------------------- |
+| 검색 결과 / 관리자 테이블              | 페이지네이션 | "몇 페이지 중 몇 페이지" 위치 인식 |
+| 피드 / 타임라인 / 모바일 우선 카탈로그 | 무한스크롤   | 스크롤 흐름 끊김 없음              |
+| 결과가 적고 정확한 위치가 중요         | 페이지네이션 | 책갈피 / 공유 링크가 _명시적_      |
+| 결과가 많고 *발견*이 중요              | 무한스크롤   | 사용자가 임계 없이 탐색            |
+
+> **혼합 패턴**: 데스크톱은 페이지네이션, 모바일은 무한스크롤로 분기하는 도메인도 흔합니다. baseline은 *두 훅을 모두 제공*하므로 도메인이 화면 사이즈에 따라 선택.
+
+---
+
+## ♾ `useInfiniteScroll` 사용
+
+TanStack Query `useInfiniteQuery`와 결합해 *센티넬 엘리먼트*가 뷰포트에 진입하면 `fetchNextPage()`를 자동 호출하는 훅입니다.
+
+### 1) 도메인 features에 무한 쿼리 추가
+
+```typescript
+// src/features/products/queries.ts (도메인 시점 작성)
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { productsKeys } from './keys'
+import { listProducts } from '@/lib/api/generated/products/products'
+
+export function useProductsInfiniteQuery(params: { size: number }) {
+  return useInfiniteQuery({
+    queryKey: productsKeys.infinite(params),
+    queryFn: ({ pageParam }) =>
+      listProducts({ page: pageParam, size: params.size }),
+    initialPageParam: 1,
+    getNextPageParam: last => (last.hasMore ? last.page + 1 : undefined),
+  })
+}
+```
+
+> **`getNextPageParam` 형태는 백엔드에 따라 다릅니다** — `{ items, hasMore, page }` / `{ items, nextCursor }` / `{ items, total, page }` 등. baseline은 응답 형태를 강제하지 않습니다.
+
+### 2) 컴포넌트에서 sentinel ref 연결
+
+```tsx
+'use client'
+
+import { useInfiniteScroll } from '@/lib/hooks/use-infinite-scroll'
+import { useProductsInfiniteQuery } from '@/features/products'
+
+function ProductFeed() {
+  const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useProductsInfiniteQuery({
+      size: 20,
+    })
+
+  const sentinelRef = useInfiniteScroll({
+    hasNextPage: hasNextPage ?? false,
+    isFetchingNextPage,
+    fetchNextPage,
+  })
+
+  const items = data?.pages.flatMap(p => p.items) ?? []
+
+  return (
+    <div>
+      {items.map(item => (
+        <YourDomainCard key={item.id} item={item} />
+      ))}
+      {/* 화면에 보이면 자동으로 다음 페이지 로드 */}
+      <div ref={sentinelRef} />
+      {isFetchingNextPage && <YourDomainSkeleton />}
+    </div>
+  )
+}
+```
+
+> **카드 / 스켈레톤은 _도메인_ 컴포넌트** — baseline이 제공하지 않습니다 (PRD `🎨 baseline 경계 정책` _No Domain Nouns_).
+
+### 3) 옵션
+
+| 옵션         | 기본값    | 용도                                             |
+| ------------ | --------- | ------------------------------------------------ |
+| `rootMargin` | `'200px'` | 뷰포트 도달 *전*에 미리 로드 (체감 부드러움)     |
+| `enabled`    | `true`    | 모달 / 탭 비활성 시 잠시 끔 (불필요한 로드 방지) |
+
+---
+
 ## 🚫 함정 모음
+
+### URL 동기화 (`useListQueryParams`)
 
 1. **표준 키와 충돌하는 자유 필터 키**: 도메인 필터에 `q` / `page` / `size` / `sort` / `order`를 _절대_ 사용하지 마세요. baseline이 가로챕니다.
 2. **검색/필터 변경 시 page 미리셋**: 위 예시처럼 항상 `setParams({ q, page: 1 })`. 빠뜨리면 빈 결과 버그.
@@ -154,13 +242,20 @@ function SearchBar() {
 6. **default 값 URL 미제거**: `value === default`이면 URL에서 자동 제거됩니다. 도메인이 `?page=1`을 기대하면 안 됨 — `params.page === 1`을 보고 판단.
 7. **filters 값이 빈 문자열**: 빈 문자열은 *필터 해제*로 간주돼 URL에서 제거됩니다. 빈 문자열을 *명시적 값*으로 쓰지 마세요.
 
+### 무한스크롤 (`useInfiniteScroll`)
+
+8. **첫 페이지 높이 부족 → 즉시 무한 루프**: 첫 응답이 화면 높이를 못 채우면 sentinel이 _즉시 보이는_ 상태라 다음 페이지를 자동 호출. `getNextPageParam`이 `undefined`를 반환할 때까지 멈추지 않습니다 — 백엔드 페이지 종료 조건을 _반드시_ 정확히 구현.
+9. **sentinel 조건부 렌더링**: `{hasNextPage && <div ref={...} />}`처럼 sentinel을 조건부로 렌더링하면 ref 콜백이 disconnect → 다시 mount → 즉시 fetch 반복이 발생할 수 있습니다. *항상 렌더링*하고 분기는 옵저버 내부의 `hasNextPage` 검사에 맡기세요.
+10. **`hasNextPage`가 `undefined`**: 첫 fetch 전 또는 `getNextPageParam` 미정의 시 `undefined`. 훅에 넘길 때 반드시 `hasNextPage ?? false`.
+11. **모달 / 탭 비활성 중 백그라운드 로드**: 화면에 안 보이는데 sentinel은 _DOM에 있어서_ 트리거될 수 있음 — `enabled: false`로 일시 정지.
+12. **무한스크롤 페이지에서 뒤로가기 → 스크롤 위치 손실**: TanStack Query 캐시는 살아있지만 *스크롤 위치*는 브라우저가 복원하지 못합니다. 도메인이 직접 `sessionStorage`로 저장/복원 (baseline 정책상 도메인 영역).
+
 ---
 
 ## 📑 다음 단계 (Phase 5-J 후속)
 
 이 가이드는 5-J가 진행되면서 아래 섹션이 추가됩니다:
 
-- **무한스크롤** (`useInfiniteList`) — 페이지네이션 대안
 - **Empty / Error / Skeleton 프리미티브** — 표시 상태별 표준 컴포넌트 (slot 패턴)
 - **토스트 사용 패턴** — sonner 호출 시점, 낙관적 업데이트 회복
 
