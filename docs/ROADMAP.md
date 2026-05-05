@@ -4,7 +4,7 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **최종 업데이트**: 2026-05-05
-**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J + 5-K-pre + 5-K + 5-L + 5-M 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
+**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J + 5-K-pre + 5-K + 5-L + 5-M + 5-N 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
 
 > baseline은 *런타임 코드*뿐 아니라 _Claude Code 협업 인프라_(`.claude/` 권한·훅)도 포함합니다.
 
@@ -161,6 +161,35 @@ baseline의 *Claude Code 협업 인프라*를 권한 정책 + 자동 검증 훅�
 - 미사용 Slack 훅 2종 제거 (`stop-hook.sh`, `notification-hook.sh`) — 외부 참조 0건 grep 확인 후 삭제
 
 검증: ask 등급은 실 운영 사이클 1회 (`git commit` + `git push`)에서 정상 동작 확인.
+
+### Phase 5-N: 1일 onboarding 학습 단서 보강 ✅
+
+Phase 5-L이 _문서 무게_ 를 줄여 학습 부담을 해소했다면, Phase 5-N은 _코드 자산_ 측면의 학습 단서 4건을 surgical하게 보강. 신규 멤버가 baseline에 들어와 _복사 후 무엇이 다른지를 비교 학습_ 할 수 있는 두 번째 템플릿, _features 레이어 테스트 패턴_ 학습 단서, README의 _Core 5 시그널 가시화_ 와 _baseline 정체성 파일 인지_.
+
+**산출 (4단계, 각각 별도 커밋)**:
+
+- 1단계 (커밋 `2ed209b`): `src/features/products/` 두 번째 도메인 템플릿 추가 — `openapi/example.yaml`에 `/products` 엔드포인트(list/create/get/delete) + Product/ProductPage/CreateProductInput 스키마 추가, `npm run gen:api`로 generated 자동 생성, `keys/queries/mutations/index` 4파일을 users와 동일 구조로 작성, `src/mocks/handlers.ts`에 `getProductsMock()` 통합. _users 코드는 0줄 수정_ (Surgical Changes).
+- 2단계 (커밋 `1045d61`): `src/features/users/` 단위 테스트 2종 추가 — `keys.test.ts`(5 it, Query Key Factory 외부 의존성 0)와 `queries.test.tsx`(1 it, useUsersQuery + MSW 통합). 테스트 환경 보정으로 `vitest.config.ts`에 jsdom URL `http://localhost:3000` 고정 + `src/test/setup.ts`에 fetch/Request `_absolutize` polyfill 추가 (jsdom + undici가 상대 경로를 절대화하지 않아 ky 내부 `new Request('/api/proxy/...')` 시점에 throw되던 문제 해소). _production 코드 0줄 수정_.
+- 3단계 (커밋 `ea21888`): README 문서 섹션을 CLAUDE.md와 동일한 3-tier 구조로 재배치 — _baseline 정체성_ (PRD/ROADMAP) / _🟢 Core 5(★)_ / _🟡 Reference 10_ / _🔵 Optional 6_. CLAUDE.md ↔ README 정합성 부채 해소(Reference에 누락되어 있던 `list-pattern` / `optimistic-update-pattern` / `toast-pattern` / `state-client` 4건 추가, Optional에 `e2e-playwright` 등재).
+- 4단계 (커밋 `9d16aa1`): README 상단 인용구 1줄 추가 — _"이 starter로 새 프로젝트를 시작했다면 README/PRD/ROADMAP은 baseline 정체성용이므로 새로 작성하거나 삭제하세요. CLAUDE.md는 첫 정체성 문단만 교체하면 나머지는 그대로 유효."_ 신규 사용자가 baseline 문서를 그대로 두는 혼선 방지.
+
+**측정 변화 (Phase 5-N 전 → 후)**:
+
+| 지표               | 이전        | 현재                     | 효과                     |
+| ------------------ | ----------- | ------------------------ | ------------------------ |
+| src LOC (gen 제외) | 3,945       | **4,191**                | +246 (products + 테스트) |
+| generated LOC      | 365         | 705                      | +340 (products 스키마)   |
+| 테스트             | 2 / 170 LOC | **4 / 245**              | +2 file, +75 LOC         |
+| features 템플릿    | 1 (users)   | **2** (users + products) | +1 (비교 학습 단서)      |
+| Core 5 LOC         | 1,479       | 1,479                    | 0 (문서 0건 추가)        |
+
+**baseline 정체성 정렬**:
+
+- 두 번째 템플릿(products)은 _도메인 명사_ 가 아닌 _generic 두 번째 예시_ 로 사용 — PRD `baseline 경계 정책`(_도메인 명사 컴포넌트 금지_) 준수
+- 테스트 환경 폴리필은 `src/test/`에만 갇힘 — production HTTP 클라이언트(`src/lib/api/client.ts`) 0줄 변경, 보안 파이프라인(401 리프레시/X-Request-ID/ApiError 정규화) 보호
+- README 상단 안내는 인용구 1줄 — 본문/구조/테이블 0줄 변경
+
+**검증**: `npm run check-all` (typecheck + lint + format) + `npm run test` (4 files / 14 tests) + `npm run build` (11 routes) 모두 통과.
 
 ### Phase 5-M: 가이드 정합성 일괄 정리 (`project-structure.md`) ✅
 
