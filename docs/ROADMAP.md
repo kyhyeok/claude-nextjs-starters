@@ -4,7 +4,7 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **최종 업데이트**: 2026-05-05
-**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J + 5-K-pre + 5-L 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
+**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J + 5-K-pre + 5-K + 5-L 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
 
 > baseline은 *런타임 코드*뿐 아니라 _Claude Code 협업 인프라_(`.claude/` 권한·훅)도 포함합니다.
 
@@ -166,11 +166,13 @@ baseline의 *Claude Code 협업 인프라*를 권한 정책 + 자동 검증 훅�
 
 baseline 정체성 검증 결과 _코드는 lean / 문서는 over-engineered_ 진단(문서 9,115 LOC vs 코드 4,310 LOC = **2.11×**, 22개 가이드 1차 학습 부담). PRD 약속인 _"1일 onboarding"_ 을 실제로 닫기 위해 가이드를 **3-tier(Core 5 / Reference 10 / Optional 5+1)** 로 분류하고, Playwright E2E를 옵션으로 격하.
 
-**산출 (3단계)**:
+**산출 (5단계)**:
 
 - 1단계 (커밋 `30becad`): 22개 가이드를 Core(5) / Reference(10) / Optional(5)로 분류. _baseline 코드 미포함_ 5종(`backend-spec-integration` / `deploy-vercel` / `file-upload-pattern` / `i18n` / `monitoring`)을 `docs/optional/`로 격리 (`git mv` rename 100%, 내용 무변동). CLAUDE.md / PRD.md / README.md "개발 가이드" 섹션을 3-tier 구조로 재배치. ROADMAP / api-pattern / security-headers 내부 참조 경로 동시 갱신.
 - 2단계 (커밋 `8e071ac`): `agent-workflow.md` 보강 — §1 도입부에 *`.claude/` 자산 23개*와 _docs/guides 22개_ 책임 분리 명시. §2 세션 유형 A/B/C/D 각각에 _"📚 함께 펼치는 가이드"_ 박스 추가 (작업 성격별 Core/Reference/Optional 매핑). 자산 개수(23) 표현은 정확하므로 그대로 유지.
 - 3단계 (커밋 `6f48326`): Playwright E2E를 옵션으로 격하. `@playwright/test` devDep + `test:e2e`/`test:e2e:ui` scripts + `playwright.config.ts`(75 LOC) + `tests/e2e/`(64 LOC) + `ci.yml` e2e job(38줄) 제거. 동등한 코드를 `docs/optional/e2e-playwright.md`의 _§보존 코드 1~4_ 에 그대로 복사 보존(5분 재도입 절차). `testing.md`는 _기본 2계층(단위/컴포넌트) + 옵션 E2E_ 로 격하.
+- 4단계 (커밋 `b6fee59`): ROADMAP에 Phase 5-L 본문 블록 + 측정 변화 표 등재. PRD §설계 원칙·§성공 기준에 _"Core 5개 = 1,445 LOC로 학습 경로 닫힘"_ 명시.
+- 5단계 (커밋 `bb24fff`): Phase L-6 신규 멤버 시뮬레이션에서 발견된 README의 Playwright 잔재 정리 — 기술 스택 표 / 빠른 시작 / 자주 쓰는 명령어 3곳에서 _작동하지 않는 명령어_(`npm run test:e2e`, `npx playwright install chromium`) 제거 후 옵션 가이드 안내로 대체. _PRD "1일 onboarding" 약속 직접 위반_ 부채 해소.
 
 **의존성 변화**: `@playwright/test@^1.59.1` 제거 (devDep -1). _Next.js 16의 optional peer dependency_ 로 lockfile에는 자동 흔적이 남지만 빌드/런타임 영향 0.
 
@@ -192,6 +194,23 @@ baseline 정체성 검증 결과 _코드는 lean / 문서는 over-engineered_ �
 - baseline 정체성("필요 시 추가") 정합 강화
 
 **검증**: 단계별로 `npm run check-all` (typecheck + lint + format) + `npm run build` 통과. Vitest 8/8 통과. 옛 가이드 경로 잔재 0건 / 새 경로 참조 24건 정상 분포.
+
+### Phase 5-K: 횡단 패턴 — 낙관적 업데이트 + 파일 업로드 ✅
+
+baseline 경계 정책의 _Layer 1 (behavior)_ 와 _Layer 4 (workflow)_ 영역에서 빈도 높은 횡단 패턴 2종을 코드와 가이드로 처리. 빈도·분기 수에 따라 _코드 + 가이드_ 와 _가이드만_ 으로 분담.
+
+**산출 (2단계)**:
+
+- 1단계 (커밋 `3d6e48d`): 빈도 9~10/10 횡단 패턴(좋아요/즐겨찾기/장바구니/투표)을 위해 `src/lib/query/optimistic.ts` 신규 — `applyOptimisticUpdate<TData>()` 헬퍼 1개(~41줄). 표준 4단계 중 cancel → snapshot → setQueryData 자동화 + rollback 클로저 반환. `invalidateQueries`는 도메인이 `onSettled`에서 명시 호출(명시성 우선). `docs/guides/optimistic-update-pattern.md` 신규(340줄) — 결정 테이블 + 표준 4단계 도식 + 사용 패턴 3종 + 함정 6선. CLAUDE.md / PRD.md 가이드 링크 추가.
+- 2단계 (커밋 `512b97f`): 빈도 5/10 파일 업로드는 _baseline 코드 미포함 + 가이드만_ 처리. `docs/guides/file-upload-pattern.md` 신규 — 흐름 결정 트리(A presigned ⭐ / B 백엔드 다이렉트 / C `/api/proxy` 경유) + Vercel 4.5MB·CORS preflight·presigned 만료 함정 사전 고지 + UI 라이브러리 비교 + 클라/서버 검증 책임 분리 + UX 패턴 + 백엔드 합의 체크리스트 + 함정 7선. `src/` 변경 0건. _Phase 5-L에서 이 가이드는 `docs/optional/file-upload-pattern.md`로 이동_.
+
+**baseline 정체성 정렬**:
+
+- Layer 1 (behavior) — `applyOptimisticUpdate`는 단일 함수, 분기 옵션 0, 단일 queryKey. 다중 쿼리는 도메인이 헬퍼를 여러 번 호출
+- Layer 4 (workflow) — 파일 업로드는 _흐름·합의는 baseline_ / _라이브러리·UX·시각은 도메인 자유_
+- KISS — 5-K 원안의 `useFileUpload`(분기 7항목) 제외, _빈도 9~10 헬퍼 + 빈도 5 가이드만_ 으로 압축
+
+**검증**: 단계별 `npm run check-all` + `npm run build` 통과 (11 routes 유지).
 
 ### Phase 5-K-pre: baseline 정체성 정리 (랜딩 + UI 셸 + 의존성) ✅
 
