@@ -17,9 +17,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'NextJS Starter - 모던 웹 스타터킷',
-  description:
-    'Next.js 16.2.4, React 19.2.5, TypeScript, TailwindCSS v4, shadcn/ui로 구축된 프로덕션 준비 웹 애플리케이션 스타터킷',
+  title: 'Frontend Baseline',
+  description: '외부 백엔드와 통신하는 프론트엔드 프로젝트의 baseline',
 }
 
 /**

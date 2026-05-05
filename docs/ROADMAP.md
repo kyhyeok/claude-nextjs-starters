@@ -4,7 +4,7 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **최종 업데이트**: 2026-05-05
-**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
+**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J + 5-K-pre 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
 
 > baseline은 *런타임 코드*뿐 아니라 _Claude Code 협업 인프라_(`.claude/` 권한·훅)도 포함합니다.
 
@@ -161,6 +161,26 @@ baseline의 *Claude Code 협업 인프라*를 권한 정책 + 자동 검증 훅�
 - 미사용 Slack 훅 2종 제거 (`stop-hook.sh`, `notification-hook.sh`) — 외부 참조 0건 grep 확인 후 삭제
 
 검증: ask 등급은 실 운영 사이클 1회 (`git commit` + `git push`)에서 정상 동작 확인.
+
+### Phase 5-K-pre: baseline 정체성 정리 (랜딩 + UI 셸 + 의존성) ✅
+
+baseline 정체성 검증 결과 발견된 _starter 잔재_ + 도메인 박힘 위반을 일괄 정리. 핵심 가치 영역(데이터/인증/모킹/패턴)은 PRD 정체성에 충실히 정렬되어 있었으나, **UI 셸 영역에 starter-cleaner 잔재가 남아 있어** 새 도메인 복사 시 *첫 작업이 sections/header/footer 갈아엎기*가 되는 구조였음.
+
+**산출 (3단계)**:
+
+- 1단계 (커밋 `22839e0`): `src/components/sections/{hero,features,cta}.tsx` 삭제 — 셀프 마케팅 콘텐츠 박힘 (Next.js 15 stale + `git clone .../your-repo/...` placeholder URL 잔재 포함). `src/app/page.tsx`를 *최소 환영 페이지*로 단순화 (Phase 1~4 데모 + 로그인 진입 링크 + api-pattern.md 안내 카드 2개).
+- 2단계 (커밋 `ae75570`): `src/components/layout/{header,footer}.tsx` + `src/components/navigation/{main-nav,mobile-nav}.tsx` 4개 파일 삭제 (~150줄). *모두 page.tsx 단 1곳에서만 사용된 랜딩 데모 셸*이었음. login/signup/users 페이지는 이미 자기 셸을 가짐. `usehooks-ts` 의존성 제거 — Header의 `useMediaQuery` 1곳에서만 쓰던 외부 의존성, 사용처 0건 후 정리.
+- 3단계: `src/app/layout.tsx` metadata를 `Frontend Baseline`으로 일반화 (NextJS Starter 자체 마케팅 제거). ROADMAP에 5-K-pre 등재 + 진행 상황 갱신.
+
+**의존성 변화**: `usehooks-ts@^3.1.1` 제거 (외부 의존성 -1).
+
+**효과**:
+
+- baseline은 *데이터/인증/모킹/패턴*에 집중. UI 셸은 _도메인 영역으로 추방_ (Headless First 정신)
+- 도메인 복사 시 `page.tsx` 1개 + `layout.tsx` metadata만 교체하면 _자체 랜딩 시작_ 가능 (이전: sections 3개 + header/footer/nav 4개 + page 셸 + layout metadata = 8곳 손봐야 했음)
+- 새 도메인은 자기 헤더/푸터/네비를 shadcn `Sheet`/`NavigationMenu` 프리미티브로 _자유 조립_
+
+**검증**: 3단계별로 `npm run check-all` (typecheck + lint + format) 통과 + `npm run build` 통과 (11 routes 유지).
 
 ### Phase 5-J: 데이터 표시 횡단 패턴 ✅
 
