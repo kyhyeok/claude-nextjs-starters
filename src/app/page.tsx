@@ -1,7 +1,5 @@
 import Link from 'next/link'
 import { Container } from '@/components/layout/container'
-import { Footer } from '@/components/layout/footer'
-import { Header } from '@/components/layout/header'
 import {
   Card,
   CardDescription,
@@ -25,39 +23,31 @@ const entryLinks = [
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1">
-        <Container size="md" className="py-16">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">
-              Frontend Baseline
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              외부 백엔드와 통신하는 프론트엔드 프로젝트의 baseline. 새 도메인을
-              추가하려면{' '}
-              <code className="bg-muted rounded px-1">
-                docs/guides/api-pattern.md
-              </code>
-              를 참고하세요.
-            </p>
-          </div>
+    <Container size="md" className="py-16">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">Frontend Baseline</h1>
+        <p className="text-muted-foreground text-sm">
+          외부 백엔드와 통신하는 프론트엔드 프로젝트의 baseline. 새 도메인을
+          추가하려면{' '}
+          <code className="bg-muted rounded px-1">
+            docs/guides/api-pattern.md
+          </code>
+          를 참고하세요.
+        </p>
+      </div>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {entryLinks.map(({ href, title, description }) => (
-              <Link key={href} href={href} className="block">
-                <Card className="hover:border-primary h-full transition-colors">
-                  <CardHeader>
-                    <CardTitle className="text-base">{title}</CardTitle>
-                    <CardDescription>{description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </Container>
-      </main>
-      <Footer />
-    </div>
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        {entryLinks.map(({ href, title, description }) => (
+          <Link key={href} href={href} className="block">
+            <Card className="hover:border-primary h-full transition-colors">
+              <CardHeader>
+                <CardTitle className="text-base">{title}</CardTitle>
+                <CardDescription>{description}</CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </Container>
   )
 }
