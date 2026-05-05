@@ -4,7 +4,7 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **최종 업데이트**: 2026-05-05
-**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I 완료 / Phase 5-D/F 옵션 (도입은 *실제 필요 시점*에)
+**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
 
 > baseline은 *런타임 코드*뿐 아니라 _Claude Code 협업 인프라_(`.claude/` 권한·훅)도 포함합니다.
 
@@ -162,6 +162,30 @@ baseline의 *Claude Code 협업 인프라*를 권한 정책 + 자동 검증 훅�
 
 검증: ask 등급은 실 운영 사이클 1회 (`git commit` + `git push`)에서 정상 동작 확인.
 
+### Phase 5-J: 데이터 표시 횡단 패턴 ✅
+
+baseline 경계 정책의 _Layer 1~4_ 영역에서 도메인 표시 횡단 패턴을 코드와 가이드로 제공. *시각적 결정*은 도메인 자유로 보장 — 같은 훅·프리미티브를 써도 e커머스/배달/채용/커뮤니티 등 도메인의 디자인은 모두 다르게 나옴.
+
+**전제** (커밋 `cae563a`): PRD에 baseline 경계 정책 5조 명문화 — 5-Layer 추상화 모델 + 정책 (Headless First / Slot 패턴 / 디자인 토큰 분리 / No Domain Nouns / 3-도메인 검증 룰) + CLAUDE.md `🚫 핵심 금지사항`에 도메인 명사 컴포넌트 추가 금지 한 줄.
+
+**산출 (코드)**:
+
+- `src/stores/ui-store.ts` — Zustand 표준 store (sidebar/command palette 토글, 도메인 무관)
+- `src/lib/hooks/use-list-query-params.ts` — 검색·필터·페이지·정렬 URL 동기화 훅 (~120줄, 자체 구현, 의존성 0)
+- `src/lib/hooks/use-infinite-scroll.ts` — IntersectionObserver 트리거 ref callback (~75줄)
+- `src/components/ui/empty-state.tsx` — `role="status"` 빈 상태 프리미티브 (Slot 패턴, 기본 일러스트/문구 0)
+- `src/components/ui/error-state.tsx` — `role="alert"` 에러 상태 프리미티브 (구조 동일, 시맨틱만 다름)
+
+**산출 (가이드)**:
+
+- `docs/guides/state-client.md` 신규 — 서버/클라이언트 상태 분리 + Zustand 패턴 + selector + persist + SSR 함정
+- `docs/guides/list-pattern.md` 신규 — `useListQueryParams` 사용 + 디바운스 + push/replace + 페이지네이션 vs 무한스크롤 + `useInfiniteScroll` + Empty/Error/Skeleton 통합 패턴 + 함정 15종
+- `docs/guides/toast-pattern.md` 신규 — 호출 시점 의사결정 + 표준 3단계 패턴 (성공→success / 4xx 매핑→인라인 / 폴백→error) + 메시지 가이드 + 함정 7종
+
+**의존성 추가**: `zustand@^5.0.13` (1개)
+
+**검증**: 5단계별 typecheck + lint + prettier + lint-staged 모든 단계 통과. typecheck 1회 실패(EmptyState `title` 속성 충돌) → `Omit<..., 'title'>`로 수정 후 통과.
+
 ---
 
 ## 🛣 향후 개선 옵션 (Phase 5 후보)
@@ -201,11 +225,7 @@ baseline 코드는 SDK 미포함. 프로덕션 출시 직전에 가이드 따라
 
 ### ~~Phase 5-E: CI/CD 베이스라인~~ → _완료 Phase로 이동됨_ (위 Phase 5-E 참조)
 
-### Phase 5-F: 클라이언트 전역 상태 (추천도 ⭐)
-
-- [ ] **Zustand** 또는 **Jotai** 패턴 가이드
-- [ ] TanStack Query 캐시와 분리 원칙 (서버 상태 vs 클라이언트 UI 상태)
-- [ ] persist 미들웨어 + SSR hydration 안전 패턴
+### ~~Phase 5-F: 클라이언트 전역 상태~~ → _완료 Phase로 이동됨_ (위 Phase 5-J 참조)
 
 ---
 
