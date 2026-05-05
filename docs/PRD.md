@@ -45,6 +45,13 @@
 4. **No Domain Nouns** — `<ProductCard/>`, `<RestaurantCard/>`, `<JobCard/>` 류 *도메인 명사가 들어간 컴포넌트*는 baseline 영구 금지. 카드 *레이아웃*은 매 도메인이 새로 작성.
 5. **3-도메인 검증 룰** — baseline에 컴포넌트를 추가할 때 PR 체크리스트: _"이 컴포넌트가 e커머스 / 배달 / 커뮤니티 세 도메인의 서로 다른 디자인에 모두 어색하지 않은가?"_ 통과하지 못하면 _훅으로 강등_ 또는 _도메인 영역으로 추방_.
 
+### shadcn 컴포넌트 재고 정책
+
+`src/components/ui/`에는 _현재 사용 중인 컴포넌트_ + *다수 도메인이 도입 첫날 사용할 가능성이 높은 재고 프리미티브*만 둡니다. 도메인-특화 / 사용 0 / 다른 컴포넌트의 셸이었던 잔재는 즉시 제거하고, 도입 시점에 `npx shadcn add <name>`으로 추가.
+
+- _재고로 유지_: `dialog`(모달은 거의 표준), `badge`, `select`, `separator`, `progress`(파일 업로드 진행률), `empty-state` / `error-state`(slot 프리미티브)
+- _도메인 영역으로 추방_: 도메인 셸용(`sheet`, `navigation-menu`, `avatar`, `header`, `footer` 등) — 새 도메인이 자기 헤더/푸터/네비를 자유 조립
+
 ### 정책에 따른 제외 결정 (예시)
 
 UI 박힘 위험을 피하기 위해 baseline *코드*에서 빠지고 _훅만_ 또는 *가이드만*으로 제공되는 항목:
@@ -77,7 +84,7 @@ UI 박힘 위험을 피하기 위해 baseline *코드*에서 빠지고 _훅만_ 
 | 프레임워크    | Next.js 16.2.4 (App Router + Turbopack)           | 서버/클라이언트 컴포넌트 분리, RSC 우선            |
 | 런타임        | React 19.2.5 + TypeScript 5                       | strict 모드                                        |
 | 스타일링      | TailwindCSS v4 + shadcn/ui (new-york)             | 다크모드(next-themes), prettier-plugin-tailwindcss |
-| UI 프리미티브 | Radix UI + Lucide Icons + sonner                  | shadcn 18종 컴포넌트                               |
+| UI 프리미티브 | Radix UI + Lucide Icons + sonner                  | shadcn 16종 (사용 중 + 재고 프리미티브)            |
 | 폼            | React Hook Form 7 + Zod 4 + `@hookform/resolvers` | shadcn `Form` 통합                                 |
 | DX            | ESLint 9 + Prettier + Husky + lint-staged         | `npm run check-all` 통합                           |
 
