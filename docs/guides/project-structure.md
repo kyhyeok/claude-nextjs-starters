@@ -17,10 +17,12 @@ claude-nextjs-starters/
 │   └── ...
 ├── src/
 │   ├── app/                            # 🚀 Next.js App Router (페이지 + Route Handler)
-│   ├── components/                     # 🧩 React 컴포넌트
+│   ├── components/                     # 🧩 React 컴포넌트 (UI 프리미티브 + Provider + 도메인 폼)
 │   ├── features/                       # 🎯 도메인별 표준 패턴 (queries/mutations/keys)
 │   ├── lib/                            # 🛠 유틸리티 + 인프라 모듈
 │   ├── mocks/                          # 🧪 MSW 핸들러/worker
+│   ├── stores/                         # 🗃 Zustand 클라이언트 상태 (UI 토글 등)
+│   ├── test/                           # 🧪 Vitest 글로벌 셋업
 │   └── proxy.ts                        # 🛡 Next.js 16 프록시 (구 middleware) — 보호 라우트
 ├── orval.config.ts                      # ⚙ codegen 설정
 ├── components.json                      # shadcn/ui 설정
@@ -62,17 +64,19 @@ src/app/
 
 ## 📁 src/components/
 
+> baseline은 _도메인 무관 프리미티브 + Provider + 도메인 폼_ 만 둡니다. _Header / Footer / Navigation / Sections_ 같은 \*셀*은 도메인이 자유 조립 (Phase 5-K-pre의 \_Headless First* / _도메인 명사 컴포넌트 금지_ 정책 — 자세히는 PRD §baseline 경계 정책 참조).
+
 ```
 src/components/
 ├── ui/                                 # shadcn/ui (재사용 기본 컴포넌트, 비즈니스 로직 X)
-├── layout/                             # 페이지 구조 (Container/Header/Footer)
-├── navigation/                         # 메뉴/내비게이션
-├── sections/                           # 페이지 섹션 (Hero/Features/CTA)
+├── layout/                             # 페이지 구조 헬퍼 (Container만 — 도메인이 헤더/푸터 자유 조립)
+│   └── container.tsx
 ├── providers/                          # React Context Provider
 │   ├── theme-provider.tsx              #   next-themes
 │   ├── query-provider.tsx              #   TanStack Query + Devtools(dev)
 │   └── mock-provider.tsx               #   MSW worker 게이트 (dev + 토글 시)
 ├── login-form.tsx                      # 도메인 폼 (RHF + Zod)
+├── login-form.test.tsx                 # 컴포넌트 옆 단위 테스트
 ├── signup-form.tsx
 └── theme-toggle.tsx
 ```
@@ -80,11 +84,9 @@ src/components/
 **컴포넌트 분류 규칙**:
 
 1. **`ui/`** — shadcn 기반. props로 모든 동작 제어, 비즈니스 로직 금지
-2. **`layout/`** — Container/Header/Footer 등 페이지 골격
-3. **`navigation/`** — 메뉴/사이드바/페이지네이션
-4. **`sections/`** — 랜딩/마케팅 섹션
-5. **`providers/`** — Context Provider (서버 상태/UI 상태 공유)
-6. **루트** — 도메인 종속 컴포넌트 (`*-form.tsx` 등)
+2. **`layout/`** — 도메인 무관 레이아웃 헬퍼(Container 등). _헤더 / 푸터 / 네비게이션은 baseline에 두지 않음_ — 도메인이 자유 조립
+3. **`providers/`** — Context Provider (서버 상태/UI 상태 공유)
+4. **루트** — 도메인 종속 컴포넌트 (`*-form.tsx` 등) + 옆자리 단위 테스트(`*.test.tsx`)
 
 ---
 
@@ -121,16 +123,25 @@ src/lib/
 │   ├── server-client.ts                #   server-only · createServerApiClient
 │   ├── errors.ts                       #   ApiError + isApiError
 │   ├── orval-mutator.ts                #   orval ↔ ky 브릿지
+│   ├── request-id.ts                   #   X-Request-ID 생성 (백엔드 트레이싱)
 │   └── generated/                      #   npm run gen:api 산출물 (lint/format 제외)
 │       ├── schemas/                    #     도메인 모델 타입
 │       └── <태그>/                     #     태그별 typed 함수 + MSW 핸들러
 ├── auth/                               # 🔐 인증 유틸
 │   ├── config.ts                       #   쿠키/엔드포인트/만료 상수
 │   ├── cookies.ts                      #   server-only · httpOnly 쿠키 입출력
+│   ├── form-schemas.ts                 #   로그인/회원가입 Zod 스키마
 │   ├── session.ts                      #   server-only · getSession()
 │   └── use-auth.ts                     #   클라 훅: useSession/useLogin/useLogout
+├── forms/                              # 📝 폼 횡단 유틸
+│   ├── api-error-to-form.ts            #   ApiError → RHF setError 매핑
+│   └── api-error-to-form.test.ts       #   단위 테스트
+├── hooks/                              # 🪝 도메인 무관 횡단 훅
+│   ├── use-infinite-scroll.ts          #   IntersectionObserver 트리거 ref callback
+│   └── use-list-query-params.ts        #   검색/필터/페이지/정렬 URL 동기화
 └── query/                              # 🔄 TanStack Query 인프라
-    └── get-query-client.ts             #   서버=요청별 / 브라우저=싱글톤
+    ├── get-query-client.ts             #   서버=요청별 / 브라우저=싱글톤
+    └── optimistic.ts                   #   applyOptimisticUpdate 헬퍼 (cancel/snapshot/rollback)
 ```
 
 **환경변수 분리 원칙**:
@@ -140,9 +151,9 @@ src/lib/
 
 **확장 가이드**:
 
-- 폼 스키마: `src/lib/schemas/<도메인>.ts` (필요 시 추가)
-- 커스텀 훅: `src/lib/hooks/use-*.ts` (도메인 무관 훅)
-- 상수: `src/lib/constants.ts`
+- 폼 횡단 유틸: `src/lib/forms/*.ts` (이미 존재 — `api-error-to-form` 등)
+- 커스텀 훅: `src/lib/hooks/use-*.ts` (이미 존재 — 도메인 무관 횡단 훅)
+- 상수: `src/lib/constants.ts` (필요 시 추가)
 
 ---
 
@@ -151,7 +162,8 @@ src/lib/
 ```
 src/mocks/
 ├── handlers.ts                         # 핸들러 통합 (도메인 mock 모음)
-├── browser.ts                          # setupWorker(...handlers)
+├── browser.ts                          # setupWorker(...handlers) — 브라우저용
+├── server.ts                           # setupServer(...handlers) — Vitest용
 └── init.ts                             # startMSW() — dev + 토글 활성화 시에만
 ```
 
@@ -159,6 +171,28 @@ src/mocks/
 **prod 영향**: 0 — dynamic import로 mock/handlers/faker가 번들에서 제외
 
 자세한 사용법은 [`mocking-msw.md`](./mocking-msw.md).
+
+---
+
+## 📁 src/stores/ — Zustand 클라이언트 상태
+
+```
+src/stores/
+└── ui-store.ts                         # UI 토글 상태 (sidebar / command palette 등 도메인 무관)
+```
+
+서버 상태는 TanStack Query, 클라이언트 UI 상태는 Zustand로 분리. 자세한 구분 기준은 [`state-client.md`](./state-client.md) 참조.
+
+---
+
+## 📁 src/test/ — Vitest 글로벌 셋업
+
+```
+src/test/
+└── setup.ts                            # @testing-library/jest-dom 매처 + MSW node lifecycle + jsdom 폴리필
+```
+
+`vitest.config.ts`의 `setupFiles`로 등록되어 모든 단위/컴포넌트 테스트에 자동 적용. 자세한 사용법은 [`testing.md`](./testing.md).
 
 ---
 

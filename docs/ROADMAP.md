@@ -4,7 +4,7 @@
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
 **최종 업데이트**: 2026-05-05
-**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J + 5-K-pre + 5-K + 5-L 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
+**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I + 5-J + 5-K-pre + 5-K + 5-L + 5-M 완료 / Phase 5-D 옵션 (도입은 *실제 필요 시점*에)
 
 > baseline은 *런타임 코드*뿐 아니라 _Claude Code 협업 인프라_(`.claude/` 권한·훅)도 포함합니다.
 
@@ -161,6 +161,26 @@ baseline의 *Claude Code 협업 인프라*를 권한 정책 + 자동 검증 훅�
 - 미사용 Slack 훅 2종 제거 (`stop-hook.sh`, `notification-hook.sh`) — 외부 참조 0건 grep 확인 후 삭제
 
 검증: ask 등급은 실 운영 사이클 1회 (`git commit` + `git push`)에서 정상 동작 확인.
+
+### Phase 5-M: 가이드 정합성 일괄 정리 (`project-structure.md`) ✅
+
+Phase 5-L의 신규 멤버 시뮬레이션(Phase L-6)에서 발견된 _가이드 미갱신 누적 부채_ 일괄 해소. 단일 파일(`docs/guides/project-structure.md`)에 6건의 부채가 5-A / 5-H / 5-J / 5-K / 5-K-pre 5개 phase에 걸쳐 누적되어 있었음 — 한 phase의 정정이 아닌 _누적 부채_ 임을 isolation해 별도 phase로 등재.
+
+**산출 (단일 커밋)**:
+
+- 전체 트리 (line 18~24): `src/stores/`(5-J) + `src/test/`(5-A) 추가
+- `src/components/` 트리·분류 규칙 (line 65~88): `navigation/` `sections/` 잔재 제거(5-K-pre), `layout/` 설명을 _"Container만 — 도메인이 헤더/푸터 자유 조립"_ 으로 정정, `login-form.test.tsx`(5-A) 추가, 분류 규칙 5종→3종으로 압축, _Headless First / 도메인 명사 컴포넌트 금지_ 정책 도입부 1줄 추가
+- `src/lib/` 트리 (line 113~134): `lib/forms/`(5-A) + `lib/hooks/`(5-J) 디렉터리 신규 표기, `api/request-id.ts`(5-H) + `auth/form-schemas.ts` + `query/optimistic.ts`(5-K) 누락 파일 추가
+- 확장 가이드 (line 141~145): _"폼 스키마: schemas/<도메인>.ts (필요 시)"_ → _"폼 횡단 유틸: forms/\*.ts (이미 존재)"_ 로 정정 (이름 충돌 해소)
+- `src/mocks/` 트리 (line 162~167): `server.ts`(5-A, MSW node lifecycle) 추가
+- `src/stores/` `src/test/` 신규 섹션 추가 — `state-client.md` / `testing.md` 가이드 링크
+
+**baseline 정체성 정렬**:
+
+- 가이드는 _현재 상태 안내_ 책임이므로 거짓 정보는 _신뢰도 부채_. ROADMAP은 _과거 사실_ 이라 손대지 않음(line 221, 222의 5-K-pre 산출 기록 그대로 유지)
+- 누적 부채를 _5-K-pre 정정_ 라벨로 처리하지 않고 _Phase 5-M_ 으로 isolation — 각 phase의 _완료 시점_ 기록은 보존, _이번 갱신_ 은 별도 사실로 추적
+
+**검증**: `find src/` 출력과 가이드 트리 라인별 대조 일치. `npm run check-all` (typecheck + lint + format) 통과.
 
 ### Phase 5-L: 문서 다이어트 + 테스트 옵션화 ✅
 
