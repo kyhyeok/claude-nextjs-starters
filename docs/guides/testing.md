@@ -1,18 +1,20 @@
 # 🧪 테스트 가이드
 
-이 문서는 baseline의 3-tier 테스트 전략과 작성 패턴을 정의합니다.
+이 문서는 baseline의 _기본 2계층_ 테스트 전략과 작성 패턴을 정의합니다.
+
+> **E2E (Playwright)는 옵션**입니다 — baseline에 _기본 미포함_. 도입 시점이 되면 [`../optional/e2e-playwright.md`](../optional/e2e-playwright.md)의 5분 절차로 활성화하세요.
 
 ---
 
-## 🧭 테스트 3계층
+## 🧭 테스트 계층
 
-| 계층         | 도구                 | 대상                     | 속도 |
-| ------------ | -------------------- | ------------------------ | ---- |
-| **단위**     | Vitest               | 순수 함수, 헬퍼, 스키마  |      |
-| **컴포넌트** | Vitest + RTL + jsdom | React 컴포넌트, 훅       |      |
-| **E2E**      | Playwright           | 실제 브라우저 + dev 서버 |      |
+| 계층         | 도구                 | 대상                     | 포함 여부 |
+| ------------ | -------------------- | ------------------------ | --------- |
+| **단위**     | Vitest               | 순수 함수, 헬퍼, 스키마  | 🟢 기본   |
+| **컴포넌트** | Vitest + RTL + jsdom | React 컴포넌트, 훅       | 🟢 기본   |
+| **E2E**      | Playwright           | 실제 브라우저 + dev 서버 | 🔵 옵션   |
 
-**원칙**: _피라미드 — 단위 多, 컴포넌트 中, E2E 少_. 각 도메인 추가 시 단위/컴포넌트 위주로 늘리고 E2E는 *핵심 사용자 흐름*만 커버.
+**원칙**: _피라미드 — 단위 多, 컴포넌트 中, E2E 少_. baseline 시작 단계에는 단위/컴포넌트만으로 충분합니다. 도메인 흐름이 안정화되어 _돌이킬 수 없는 시나리오_(결제·주문·인증)가 생기면 E2E를 옵션 가이드 절차로 도입하세요.
 
 ---
 
@@ -21,15 +23,9 @@
 ```bash
 npm run test          # Vitest 단위/컴포넌트 (CI 모드)
 npm run test:watch    # Vitest watch 모드
-npm run test:e2e      # Playwright E2E (헤드리스)
-npm run test:e2e:ui   # Playwright UI 모드 (디버깅)
 ```
 
-처음 한 번:
-
-```bash
-npx playwright install chromium    # 브라우저 다운로드
-```
+> E2E 도입 후에는 `npm run test:e2e` / `test:e2e:ui`가 추가됩니다 — 옵션 가이드 §Step 2 참조.
 
 ---
 
@@ -37,7 +33,6 @@ npx playwright install chromium    # 브라우저 다운로드
 
 ```
 vitest.config.ts                     # Vitest 설정 (jsdom + RTL)
-playwright.config.ts                 # Playwright 설정 (webServer 자동 시작)
 
 src/test/setup.ts                    # Vitest 글로벌 셋업
                                      #  - @testing-library/jest-dom 매처
@@ -46,11 +41,9 @@ src/test/setup.ts                    # Vitest 글로벌 셋업
 
 src/mocks/server.ts                  # MSW node server (테스트용)
                                      # browser.ts와 같은 handlers를 공유
-
-tests/e2e/                           # Playwright E2E 테스트
-├── users-page.spec.ts
-└── auth-protection.spec.ts
 ```
+
+> Playwright 도입 시 `playwright.config.ts` + `tests/e2e/`가 추가됩니다 — 옵션 가이드 §Step 3·4 참조.
 
 ---
 
@@ -133,44 +126,19 @@ it('빈 입력 제출 시 검증 에러 표시', async () => {
 
 ---
 
-## 3️⃣ E2E 테스트 — Playwright
+## 3️⃣ E2E 테스트 — _옵션_
 
-*핵심 사용자 흐름*만 작성. 모든 페이지를 E2E로 커버하지 마세요 (단위/컴포넌트가 더 효율적).
+baseline은 E2E를 _기본 포함하지 않습니다_. _돌이킬 수 없는 흐름_(결제·주문·인증)이 안정화되어 *핵심 사용자 흐름 회귀 방지*가 필요해진 시점에 도입하세요.
 
-**위치**: `tests/e2e/`
-
-**MSW와의 통합**:
-
-- `playwright.config.ts`의 `webServer.env.NEXT_PUBLIC_API_MOCK_ENABLED='true'`
-- dev 서버가 자동 시작되며 MSW worker가 활성화 → 실제 백엔드 없이 E2E 가능
-
-**예시** (`tests/e2e/users-page.spec.ts`):
-
-```typescript
-import { expect, test } from '@playwright/test'
-
-test('/users 페이지에 mock 데이터가 렌더된다', async ({ page }) => {
-  await page.goto('/users')
-  await expect(page.getByRole('heading', { name: '사용자 목록' })).toBeVisible()
-  await expect(page.getByText(/ID:/).first()).toBeVisible()
-})
-```
+**도입 절차**: [`../optional/e2e-playwright.md`](../optional/e2e-playwright.md) — 5분 절차 + 보존 코드(playwright.config.ts / 시나리오 2종 / CI job) 그대로 복사.
 
 **언제 E2E를 작성할까**:
 
-- 인증 흐름 (로그인 → 보호 라우트 진입)
-- 결제, 주문 같은 _돌이킬 수 없는_ 흐름
-- 여러 페이지를 거치는 위저드
-- 단순 CRUD (컴포넌트 테스트로 충분)
-- 폼 검증 (컴포넌트 테스트로)
-
-**Playwright 패턴**:
-
-- `getByRole` 우선
-- `expect(...).toBeVisible({ timeout })` — 비동기 렌더 대기
-- `page.waitForRequest(...)` — 네트워크 검증
-- 여러 매치는 `.first()` / `.nth(i)` / `.filter(...)`로 좁힘
-- 인증 상태가 필요한 시나리오는 `storageState`로 재사용 (Playwright fixtures)
+- ✅ 인증 흐름 (로그인 → 보호 라우트 진입)
+- ✅ 결제, 주문 같은 _돌이킬 수 없는_ 흐름
+- ✅ 여러 페이지를 거치는 위저드
+- ❌ 단순 CRUD (컴포넌트 테스트로 충분)
+- ❌ 폼 검증 (컴포넌트 테스트로)
 
 ---
 
@@ -178,16 +146,15 @@ test('/users 페이지에 mock 데이터가 렌더된다', async ({ page }) => {
 
 `.github/workflows/ci.yml`에 다음 job이 등록됨:
 
-| Job     | 실행 내용                                  |
-| ------- | ------------------------------------------ |
-| `check` | typecheck + lint + format                  |
-| `build` | `next build`                               |
-| `test`  | `npm run test` (Vitest)                    |
-| `e2e`   | `npm run test:e2e` (Playwright + chromium) |
+| Job     | 실행 내용                 |
+| ------- | ------------------------- |
+| `check` | typecheck + lint + format |
+| `build` | `next build`              |
+| `test`  | `npm run test` (Vitest)   |
 
-**Branch Protection**에서 위 4개 status check를 *모두 required*로 설정하면, 테스트 통과해야만 머지 가능.
+**Branch Protection**에서 위 3개 status check를 *모두 required*로 설정하면, 테스트 통과해야만 머지 가능.
 
-E2E 실패 시 `playwright-report/`가 GitHub Actions artifact로 14일간 보존 — 실패 원인을 비주얼로 확인 가능.
+> E2E 도입 시 `e2e` job이 추가됩니다 — 옵션 가이드 §보존 코드 4 참조.
 
 ---
 
@@ -203,22 +170,17 @@ E2E 실패 시 `playwright-report/`가 GitHub Actions artifact로 14일간 보�
 - 원인: input이 wrapper div 안에 있어 FormControl의 id 주입이 div로 갔음
 - 해결: `getByPlaceholderText` 또는 `getByRole('textbox', { name })`로
 
-### 3) E2E 테스트가 `webServer` 시작 실패
+### 3) MSW가 *테스트 환경*에서 호출을 가로채지 못함
 
-- 원인: 포트 3000이 이미 사용 중이거나 BACKEND_API_BASE_URL 누락
-- 해결: 다른 dev 서버 종료. CI는 `webServer.env`에서 placeholder 자동 주입
+- `setup.ts`의 `server.listen()`이 시작했는지 확인
+- handlers가 `src/mocks/handlers.ts`에 등록되어 있는지 확인
 
-### 4) MSW가 *테스트 환경*에서 호출을 가로채지 못함
-
-- 단위/컴포넌트 (Vitest): `setup.ts`의 `server.listen()`이 시작했는지 확인
-- E2E (Playwright): browser worker가 등록됨. `NEXT_PUBLIC_API_MOCK_ENABLED=true` 확인
-
-### 5) Strict mode violation (`getByText` 다중 매치)
+### 4) Strict mode violation (`getByText` 다중 매치)
 
 - 원인: mock 데이터가 여러 행 — selector가 여러 element 매치
 - 해결: `.first()` / `.filter({...})` / 더 구체적 selector
 
-### 6) `waitFor` 타임아웃
+### 5) `waitFor` 타임아웃
 
 - 원인: 비동기 작업이 완료되지 않음 (mutation 미응답, query 미해결)
 - 해결: `findByX`로 자동 재시도 또는 `waitFor(() => ..., { timeout })` 늘림
@@ -232,7 +194,7 @@ E2E 실패 시 `playwright-report/`가 GitHub Actions artifact로 14일간 보�
 - [ ] `keys.test.ts` — query key factory 출력 검증 (단순)
 - [ ] `queries.test.tsx` — 훅 동작 검증 (MSW로 응답 mock)
 - [ ] `mutations.test.tsx` — invalidate 동작 검증
-- [ ] (선택) `tests/e2e/<도메인>.spec.ts` — 핵심 흐름 1개
+- [ ] (E2E 도입 후, 선택) `tests/e2e/<도메인>.spec.ts` — 핵심 흐름 1개
 
 폼이 있는 경우:
 
@@ -246,7 +208,7 @@ E2E 실패 시 `playwright-report/`가 GitHub Actions artifact로 14일간 보�
 - API 통신 패턴: [`api-pattern.md`](./api-pattern.md)
 - MSW 모킹: [`mocking-msw.md`](./mocking-msw.md)
 - 폼 패턴: [`forms-react-hook-form.md`](./forms-react-hook-form.md)
+- E2E 도입(옵션): [`../optional/e2e-playwright.md`](../optional/e2e-playwright.md)
 - 외부 자료:
   - [Vitest](https://vitest.dev/)
   - [Testing Library](https://testing-library.com/docs/react-testing-library/intro)
-  - [Playwright](https://playwright.dev/)

@@ -228,7 +228,7 @@ npm run gen:api       # openapi/<spec>.yaml → typed 함수 + 스키마 + MSW �
 # 테스트
 npm run test          # Vitest 단위/컴포넌트 (CI 모드)
 npm run test:watch    # Vitest watch
-npm run test:e2e      # Playwright E2E (헤드리스)
+# E2E (Playwright)는 옵션 — 도입은 docs/optional/e2e-playwright.md 참조
 
 # UI 컴포넌트
 npx shadcn@latest add button   # 새 shadcn 컴포넌트 추가
