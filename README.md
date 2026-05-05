@@ -101,6 +101,7 @@ npm run test             # Vitest 단위/컴포넌트
 | [🛡 보안 헤더 + CSP](./docs/guides/security-headers.md)          | HSTS / CSP / 헬스체크 / X-Request-ID  |
 | [🧪 테스트](./docs/guides/testing.md)                            | Vitest + RTL                          |
 | [🔍 디버깅 하네스](./docs/guides/debugging.md)                   | Symptom/Evidence 분리 + 환경 매트릭스 |
+| [🧭 하네스 성숙도](./docs/guides/harness-maturity.md)            | 도메인 의존도 + Day 1 → Month 6 곡선  |
 
 ### 🔵 Optional (도입 시점에만 펼침)
 

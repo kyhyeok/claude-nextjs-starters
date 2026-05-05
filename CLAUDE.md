@@ -204,6 +204,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - **보안 헤더 + CSP**: `@/docs/guides/security-headers.md` (헬스체크 / X-Request-ID / CSP 정책 / nonce)
 - **테스트 가이드**: `@/docs/guides/testing.md` (Vitest + RTL)
 - **디버깅 하네스**: `@/docs/guides/debugging.md` (Symptom/Evidence/Verification Loop 분리 + 환경 매트릭스 + X-Request-ID 추적 + 반례 루프)
+- **하네스 성숙도**: `@/docs/guides/harness-maturity.md` (6개 하네스 도메인 의존도 + Day 1 / Week 1 / Month 1·3·6 곡선 + 자기 진단 체크리스트)
 
 ### 🔵 Optional (도입 시점에만 펼침 — `docs/optional/`)
 
