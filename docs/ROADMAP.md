@@ -3,8 +3,10 @@
 > 이 문서는 **claude-nextjs-starters baseline 자체**의 개발 진행 상황과 향후 개선 방향을 추적합니다.
 > 새 프로젝트 시작 시 이 로드맵을 복사해 도메인 작업으로 채워 사용해도 됩니다.
 
-**최종 업데이트**: 2026-05-04
-**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H 완료 / Phase 5-D/F 옵션 (도입은 *실제 필요 시점*에)
+**최종 업데이트**: 2026-05-05
+**진행 상황**: **baseline 마감** — Phase 1~4 + 4.5/4.6/4.7 + 5-A + 5-B(가이드) + 5-C(가이드) + 5-E + 5-G + 5-H + 5-I 완료 / Phase 5-D/F 옵션 (도입은 *실제 필요 시점*에)
+
+> baseline은 *런타임 코드*뿐 아니라 _Claude Code 협업 인프라_(`.claude/` 권한·훅)도 포함합니다.
 
 > **baseline은 마감되었습니다.** 이후 작업은:
 >
@@ -141,6 +143,24 @@ baseline의 *운영 단계 빈틈*을 코드 + 가이드로 보강.
   - Content-Security-Policy (환경별 동적 — dev/prod 분기)
 - `docs/guides/security-headers.md` 신규 (헤더 8종 + CSP 정책 + 외부 도메인 추가 절차 + nonce 마이그레이션 + Report-Only + X-Request-ID 흐름 + 헬스체크 + 함정 6종)
 - CLAUDE.md / PRD.md에 가이드 링크 추가
+
+### Phase 5-I: .claude/ Harness 정비 ✅
+
+baseline의 *Claude Code 협업 인프라*를 권한 정책 + 자동 검증 훅으로 정비. 코드 변경은 `.claude/` 디렉터리에 한정.
+
+**Permission Harness — 공유 deny 정책 + 개인 설정 분리** (커밋 `89baf29`):
+
+- `.claude/settings.json` (공유) — env/secret/key 읽기 차단, 파괴적 git/rm 차단, generated 디렉터리 보호
+- `.claude/settings.local.json` (개인) — allow 목록과 MCP 설정 분리 + gitignore
+
+**Verification Harness — ask 등급 + 자동 prettier/typecheck** (커밋 `4df5ea0`):
+
+- `ask` 등급 추가: `git commit/push`, `npm install/i/uninstall/remove`, `docker compose/-compose`
+- PostToolUse 훅 (`.claude/hooks/post-edit-prettier.sh`): Edit/Write/MultiEdit 후 변경 파일 자동 prettier (프로젝트 외부/미지원 확장자/존재하지 않는 파일은 silent-skip)
+- Stop 훅 (`.claude/hooks/typecheck-on-stop.sh`): `git status --porcelain`에서 `.ts/.tsx` 변경이 있을 때만 `npm run typecheck` 실행, 실패 시 exit 2로 Claude에 후속 작업 위임 (`stop_hook_active` 무한 루프 방지)
+- 미사용 Slack 훅 2종 제거 (`stop-hook.sh`, `notification-hook.sh`) — 외부 참조 0건 grep 확인 후 삭제
+
+검증: ask 등급은 실 운영 사이클 1회 (`git commit` + `git push`)에서 정상 동작 확인.
 
 ---
 
