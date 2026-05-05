@@ -264,6 +264,7 @@ npm run build         # 빌드 성공 확인
 - 컴포넌트에서 `apiClient` 또는 raw fetch 직접 호출 (항상 mutation/query 훅 경유)
 - 토큰을 `localStorage`/`sessionStorage`에 저장 (httpOnly 쿠키만 사용)
 - `BACKEND_API_BASE_URL`을 `NEXT_PUBLIC_*`로 노출 (서버 전용 유지)
+- baseline `src/components/`에 **도메인 명사 컴포넌트** 추가 (`<ProductCard/>`, `<JobCard/>`, `<RestaurantCard/>` 등) — 디자인 자유 보장 정책 위반. 자세히는 `@/docs/PRD.md` _baseline 경계 정책_ 참조
 
 > 외부 백엔드 통신 시 폼은 **mutation 훅 + RHF + Zod** 조합이 1차 권장입니다.
 > Server Actions는 Next.js 내부 라우트나 자체 RSC 흐름에서 사용하세요 — 자세히는 `@/docs/guides/forms-react-hook-form.md`.
