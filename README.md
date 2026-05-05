@@ -64,27 +64,51 @@ npm run test             # Vitest 단위/컴포넌트
 
 ## 📚 문서
 
-새 프로젝트를 시작하기 전에 _최소_ `📋 PRD`와 `🔌 API 통신 패턴`을 읽으세요.
+> **🟢 Core 5개(★)만 읽으면 1일 onboarding이 닫힙니다** (총 1,479 LOC).
+> Reference / Optional은 *필요 시점*에만 펼쳐보세요.
 
-| 문서                                                               | 내용                                    |
-| ------------------------------------------------------------------ | --------------------------------------- |
-| [📋 PRD](./docs/PRD.md)                                            | baseline 정체성/제공 기능/사용 시나리오 |
-| [🗺 ROADMAP](./docs/ROADMAP.md)                                    | 완료된 Phase + 향후 옵션                |
-| [📁 프로젝트 구조](./docs/guides/project-structure.md)             | 디렉터리/네이밍/별칭                    |
-| [🔌 API 통신 패턴](./docs/guides/api-pattern.md)                   | TanStack Query + ky + features          |
-| [🔐 인증 패턴](./docs/guides/auth-pattern.md)                      | httpOnly 쿠키 + 401 리프레시            |
-| [🃏 MSW 모킹](./docs/guides/mocking-msw.md)                        | 백엔드 미완성 시 선행 개발              |
-| [🧪 테스트](./docs/guides/testing.md)                              | Vitest + RTL                            |
-| [🛡 보안 헤더 + CSP](./docs/guides/security-headers.md)            | HSTS / CSP / 헬스체크 / X-Request-ID    |
-| [🔗 백엔드 스펙 통합](./docs/optional/backend-spec-integration.md) | _옵션_ — SpringDoc / restDocs           |
-| [🚀 Vercel 배포](./docs/optional/deploy-vercel.md)                 | _옵션_ — Vercel + GitHub Actions 분담   |
-| [📊 모니터링](./docs/optional/monitoring.md)                       | _옵션_ — Sentry + Prom/Graf 분담        |
-| [🌐 i18n 도입](./docs/optional/i18n.md)                            | _옵션_ — 다국어 도입 절차               |
-| [📎 파일 업로드](./docs/optional/file-upload-pattern.md)           | _옵션_ — presigned / multipart / proxy  |
-| [🎨 스타일링](./docs/guides/styling-guide.md)                      | TailwindCSS + mobile-first              |
-| [🧩 컴포넌트 패턴](./docs/guides/component-patterns.md)            | RSC / Client / 변형                     |
-| [⚡ Next.js 16](./docs/guides/nextjs-16.md)                        | proxy/async APIs/Turbopack              |
-| [📝 폼 처리](./docs/guides/forms-react-hook-form.md)               | RHF + Zod + mutation                    |
+### baseline 정체성
+
+| 문서                            | 내용                                    |
+| ------------------------------- | --------------------------------------- |
+| [📋 PRD](./docs/PRD.md)         | baseline 정체성/제공 기능/사용 시나리오 |
+| [🗺 ROADMAP](./docs/ROADMAP.md) | 완료된 Phase + 향후 옵션                |
+
+### 🟢 Core (★ 1일 onboarding 필독 — 5개)
+
+| 문서                                                      | 내용                                |
+| --------------------------------------------------------- | ----------------------------------- |
+| ★ [🤖 에이전트 워크플로](./docs/guides/agent-workflow.md) | 세션 유형별 가이드 활용 흐름        |
+| ★ [📁 프로젝트 구조](./docs/guides/project-structure.md)  | 디렉터리/네이밍/별칭                |
+| ★ [🔌 API 통신 패턴](./docs/guides/api-pattern.md)        | TanStack Query + ky + features 표준 |
+| ★ [🔐 인증 패턴](./docs/guides/auth-pattern.md)           | httpOnly 쿠키 + 401 리프레시        |
+| ★ [🃏 MSW 모킹](./docs/guides/mocking-msw.md)             | 백엔드 미완성 시 선행 개발          |
+
+### 🟡 Reference (필요 시 펼침)
+
+| 문서                                                             | 내용                                  |
+| ---------------------------------------------------------------- | ------------------------------------- |
+| [📝 폼 처리](./docs/guides/forms-react-hook-form.md)             | RHF + Zod + mutation                  |
+| [📋 리스트 패턴](./docs/guides/list-pattern.md)                  | 검색·필터·페이지·정렬·무한스크롤      |
+| [⚡ 낙관적 업데이트](./docs/guides/optimistic-update-pattern.md) | 좋아요/즐겨찾기/장바구니 — 표준 4단계 |
+| [🔔 토스트 사용](./docs/guides/toast-pattern.md)                 | sonner 호출 시점 + 표준 3단계 패턴    |
+| [🗄 클라이언트 상태](./docs/guides/state-client.md)              | Zustand + 서버/클라이언트 상태 분리   |
+| [🎨 스타일링](./docs/guides/styling-guide.md)                    | TailwindCSS + mobile-first            |
+| [🧩 컴포넌트 패턴](./docs/guides/component-patterns.md)          | RSC / Client / 변형                   |
+| [⚡ Next.js 16](./docs/guides/nextjs-16.md)                      | proxy/async APIs/Turbopack            |
+| [🛡 보안 헤더 + CSP](./docs/guides/security-headers.md)          | HSTS / CSP / 헬스체크 / X-Request-ID  |
+| [🧪 테스트](./docs/guides/testing.md)                            | Vitest + RTL                          |
+
+### 🔵 Optional (도입 시점에만 펼침)
+
+| 문서                                                               | 내용                                  |
+| ------------------------------------------------------------------ | ------------------------------------- |
+| [🔗 백엔드 스펙 통합](./docs/optional/backend-spec-integration.md) | SpringDoc / restDocs                  |
+| [🚀 Vercel 배포](./docs/optional/deploy-vercel.md)                 | Vercel + GitHub Actions 분담          |
+| [📊 모니터링](./docs/optional/monitoring.md)                       | Sentry + Prom/Graf 분담               |
+| [🌐 i18n 도입](./docs/optional/i18n.md)                            | 다국어 도입 절차                      |
+| [📎 파일 업로드](./docs/optional/file-upload-pattern.md)           | presigned / multipart / proxy         |
+| [🧪 E2E (Playwright)](./docs/optional/e2e-playwright.md)           | 5분 재도입 — 보존된 config + spec 4종 |
 
 > 🤖 **Claude Code 사용자**: [`CLAUDE.md`](./CLAUDE.md)에 개발 지침과 자주 쓰는 명령이 정리되어 있습니다.
 
