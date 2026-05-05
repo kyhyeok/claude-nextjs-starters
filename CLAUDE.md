@@ -195,6 +195,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - **리스트 패턴**: `@/docs/guides/list-pattern.md` (검색·필터·페이지·정렬·무한스크롤 + Empty/Error/Skeleton)
 - **토스트 사용 패턴**: `@/docs/guides/toast-pattern.md` (sonner 호출 시점 + 표준 3단계 패턴)
 - **낙관적 업데이트 패턴**: `@/docs/guides/optimistic-update-pattern.md` (좋아요/즐겨찾기/장바구니 — `applyOptimisticUpdate` 헬퍼 + 표준 4단계 + 롤백)
+- **파일 업로드 가이드**: `@/docs/guides/file-upload-pattern.md` (필요 시 도입 — presigned URL / 다이렉트 multipart / proxy 경유 흐름 비교 + Vercel 4.5MB 함정)
 - **Vercel 배포**: `@/docs/guides/deploy-vercel.md` (Vercel + GitHub Actions 분담)
 - **테스트 가이드**: `@/docs/guides/testing.md` (Vitest + RTL + Playwright)
 - **i18n 도입 가이드**: `@/docs/guides/i18n.md` (필요 시 도입 절차 — baseline 코드 기본 미포함)

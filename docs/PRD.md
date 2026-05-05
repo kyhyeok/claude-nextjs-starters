@@ -215,6 +215,7 @@ DX           ESLint 9, Prettier, Husky, lint-staged, server-only
 - **리스트 패턴**: [`./guides/list-pattern.md`](./guides/list-pattern.md) (검색·필터·페이지·정렬·무한스크롤 + Empty/Error/Skeleton)
 - **토스트 사용 패턴**: [`./guides/toast-pattern.md`](./guides/toast-pattern.md) (sonner 호출 시점 + 표준 3단계 패턴)
 - **낙관적 업데이트 패턴**: [`./guides/optimistic-update-pattern.md`](./guides/optimistic-update-pattern.md) (좋아요/즐겨찾기/장바구니 — `applyOptimisticUpdate` 헬퍼 + 표준 4단계 + 롤백)
+- **파일 업로드 가이드**: [`./guides/file-upload-pattern.md`](./guides/file-upload-pattern.md) (옵션 — 필요 시 / presigned vs multipart vs proxy 경유)
 - **Vercel 배포**: [`./guides/deploy-vercel.md`](./guides/deploy-vercel.md)
 - **테스트 가이드**: [`./guides/testing.md`](./guides/testing.md)
 - **i18n 도입 가이드**: [`./guides/i18n.md`](./guides/i18n.md) (옵션 — 필요 시)
